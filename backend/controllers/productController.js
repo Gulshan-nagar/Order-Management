@@ -1,25 +1,29 @@
 const Product = require("../models/Product");
 
 // @desc Create new product (admin only)
+// Assuming: Product has 'image' field
 exports.createProduct = async (req, res) => {
   try {
-    console.log("Request received to create product");
-    console.log("Request body:", req.body);
+    console.log("➡️ req.body:", req.body);
+    console.log("➡️ req.file:", req.file); // 👈 Check if file is received
 
-    const { name, price, stock, description } = req.body;
+    const { name, price, description, stock } = req.body;
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
 
-    if (!name || !price || !stock || !description) {
-      console.log("Missing fields in request body");
-      return res.status(400).json({ message: "All fields are required" });
-    }
+    const product = new Product({
+      name,
+      price,
+      stock,
+      description,
+      image: req.file ? req.file.filename : "",
+      createdBy: req.user._id,
+    });
 
-    const product = await Product.create({ name, price, stock, description });
-
-    console.log("Product created successfully:", product);
-    res.status(201).json(product);
+    const savedProduct = await product.save();
+    res.status(201).json(savedProduct);
   } catch (error) {
-    console.error("Error in createProduct:", error.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("Create product error:", error.message);
+    res.status(500).json({ message: "Failed to create product" });
   }
 };
 
@@ -33,33 +37,29 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// exports.updateProduct = async (req, res) => {
-  //   try {
-    //     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    //     if (!product) return res.status(404).json({ message: "Product not found" });
-    //     res.json(product);
-    //   } catch (error) {
-      //     res.status(500).json({ message: "Server error" });
-      //   }
-      // };
-      // @desc Update a product (admin only)
 exports.updateProduct = async (req, res) => {
-  const { id } = req.params;
-  const { name, price, category, image } = req.body;
-
   try {
-    const product = await Product.findById(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.category = category || product.category;
-    product.image = image || product.image;
+    // Update fields from request body
+    product.name = req.body.name || product.name;
+    product.price = req.body.price || product.price;
+    product.stock = req.body.stock || product.stock;
+    product.description = req.body.description || product.description;
 
-    const updated = await product.save();
-    res.status(200).json(updated);
+    // 👇 Image update if file is uploaded
+    if (req.file) {
+      product.image = req.file.filename;
+    }
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update product" });
+    console.error("Update product error:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 

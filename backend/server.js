@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const connectDB = require("./config/db");
+// backend/server.js
+const path = require("path");
+
 
 // Import routes
 const userRoutes = require("./routes/userRoutes");
@@ -21,6 +24,7 @@ const server = http.createServer(app);
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -61,8 +65,12 @@ io.on("connection", (socket) => {
   });
 });
 
+// ✅ These are already available in CommonJS:
+console.log(__dirname); // current directory
+console.log(__filename); // 
 // Make io available for other files (like controllers)
 module.exports.io = io;
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Start server after DB connects
 const PORT = process.env.PORT || 5000;
