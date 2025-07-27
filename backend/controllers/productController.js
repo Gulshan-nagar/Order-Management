@@ -4,8 +4,8 @@ const Product = require("../models/Product");
 // Assuming: Product has 'image' field
 exports.createProduct = async (req, res) => {
   try {
-    console.log("➡️ req.body:", req.body);
-    console.log("➡️ req.file:", req.file); // 👈 Check if file is received
+    console.log("Received file:", req.file);
+      console.log("Body:", req.body);
 
     const { name, price, description, stock } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
@@ -15,7 +15,7 @@ exports.createProduct = async (req, res) => {
       price,
       stock,
       description,
-      image: req.file ? req.file.filename : "",
+      image: imagePath,
       createdBy: req.user._id,
     });
 
@@ -27,6 +27,10 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+
+
+
+
 // @desc Get all products
 exports.getAllProducts = async (req, res) => {
   try {
@@ -37,31 +41,51 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+// exports.updateProduct = async (req, res) => {
+  //   try {
+    //     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    //     if (!product) return res.status(404).json({ message: "Product not found" });
+    //     res.json(product);
+    //   } catch (error) {
+      //     res.status(500).json({ message: "Server error" });
+      //   }
+      // };
+      // @desc Update a product (admin only)
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const productId = req.params.id;
+
+    // Pehle product ko find karo
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+    if (req.file) {
+  product.image = `/uploads/${req.file.filename}`;
+}
 
-    // Update fields from request body
+
+    // Check for new image
+    
+     // Update fields
     product.name = req.body.name || product.name;
     product.price = req.body.price || product.price;
     product.stock = req.body.stock || product.stock;
-    product.description = req.body.description || product.description;
-
-    // 👇 Image update if file is uploaded
+    
     if (req.file) {
-      product.image = req.file.filename;
-    }
-
+   product.image = `/uploads/${req.file.filename}`;
+ }
     const updatedProduct = await product.save();
-    res.json(updatedProduct);
+    res.status(200).json(updatedProduct);
   } catch (error) {
     console.error("Update product error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
+
+
 
 // @desc Delete a product (admin only)
 exports.deleteProduct = async (req, res) => {
