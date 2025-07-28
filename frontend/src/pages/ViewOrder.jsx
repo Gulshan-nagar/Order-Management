@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../utils/apiPaths";
+import { API_PATHS, BASE_URL } from "../utils/apiPaths";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io(`${BASE_URL}`);
 
 const ViewOrder = () => {
   const [orders, setOrders] = useState([]);
@@ -62,7 +62,7 @@ const ViewOrder = () => {
                   {item.product ? (
                     <>
                       <img
-                        src={`http://localhost:5000${item.product.image}`}
+                        src={`${BASE_URL}${item.product.image}`}
                         alt={item.product.name}
                         className="w-24 h-24 object-cover rounded"
                        

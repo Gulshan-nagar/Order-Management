@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
+import { API_PATHS, BASE_URL } from "../../utils/apiPaths";
 import Layout from "../../components/Layout";
 
 function AdminOrders() {
@@ -101,7 +101,7 @@ function AdminOrders() {
                       <img
                         src={
                           item.product?.image
-                            ? `http://localhost:5000${item.product.image}`
+                            ? `${BASE_URL}${item.product.image}`
                             : "https://via.placeholder.com/40"
                         }
                         alt={item.product?.name || "Product"}

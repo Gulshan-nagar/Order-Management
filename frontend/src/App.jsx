@@ -10,7 +10,6 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import UserLayout from "./components/UserLayout";
-import TrackOrder from './pages/trackOrder';
 import AdminOrders from './pages/admin/AdminOrders';
 import ViewOrder from './pages/ViewOrder';
 
@@ -29,7 +28,6 @@ function App() {
           <Route path="/products" element={<Products />} />
 
           <Route path="/view-order" element={<ViewOrder />} />
-          <Route path="/track-order" element={<TrackOrder />} />
 
         </Route>
 

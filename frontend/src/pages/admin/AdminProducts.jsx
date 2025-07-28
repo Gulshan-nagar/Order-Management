@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 // import uploadImage from "../../utils/uploadImage"
-import { API_PATHS } from "../../utils/apiPaths";
+import { API_PATHS, BASE_URL } from "../../utils/apiPaths";
 import Layout from "../../components/Layout";
 
 // ... your imports remain same
@@ -100,7 +100,7 @@ const AdminProducts = () => {
     setEditId(product._id);
     setImage(null); // reset image file
     setImagePreview(
-      product.image ? `http://localhost:5000${product.image}` : null
+      product.image ? `${BASE_URL}${product.image}` : null
     );
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -211,7 +211,7 @@ const AdminProducts = () => {
                   <td className="p-2">
                     {product.image ? (
                       <img
-                        src={`http://localhost:5000${product.image}`}
+                        src={`${BASE_URL}${product.image}`}
                         alt={product.name}
                         className="h-16 w-16 object-cover rounded-md border"
                       />

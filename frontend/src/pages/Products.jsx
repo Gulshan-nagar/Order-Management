@@ -1,7 +1,7 @@
 // src/pages/Products.jsx
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../utils/apiPaths";
+import { API_PATHS, BASE_URL } from "../utils/apiPaths";
 import { useNavigate } from "react-router-dom";
 
 const Products = () => {
@@ -57,7 +57,7 @@ const Products = () => {
               className="border p-4 rounded-xl shadow hover:shadow-md transition bg-white"
             >
               <img
-                src={`http://localhost:5000${product.image}`}
+                src={`${BASE_URL}${product.image}`}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded mb-3"
               />
