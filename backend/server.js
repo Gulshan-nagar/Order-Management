@@ -22,7 +22,11 @@ const app = express();
 const server = http.createServer(app);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,8 +41,9 @@ app.get("/healthz", (req, res) => res.send("Server is healthy ✅"));
 // SOCKET.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "*", // allow all for dev
+      origin: 'http://localhost:5173',
     methods: ["GET", "POST"],
+     credentials: true,
   },
 });
 

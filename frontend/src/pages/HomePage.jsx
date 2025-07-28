@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "../components/ui/card"; // <-- Adjust path if HomePage is in pages
+} from "../components/ui/Card"; // <-- Adjust path if HomePage is in pages
 
 
 const HomePage = () => {
