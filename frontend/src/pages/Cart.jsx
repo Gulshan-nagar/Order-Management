@@ -30,7 +30,7 @@ const Cart = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/orders",
+        "https://your-backend.onrender.com/api/orders",
         { items: orderItems },
         {
           headers: {

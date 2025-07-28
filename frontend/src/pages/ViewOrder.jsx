@@ -3,7 +3,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS, BASE_URL } from "../utils/apiPaths";
 import { io } from "socket.io-client";
 
-const socket = io(`${BASE_URL}`);
+const socket = io("https://your-backend.onrender.com");
 
 const ViewOrder = () => {
   const [orders, setOrders] = useState([]);
