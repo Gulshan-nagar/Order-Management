@@ -1,58 +1,48 @@
 import React from "react";
+import Layout from "../../components/Layout";
 import { useNavigate } from "react-router-dom";
+
+import MetricCard from "../../components/ui/MetricCard";
+import DashboardCard from "../../components/ui/DashboardCard";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-
-  const goTo = (path) => {
-    navigate(path);
-  };
+  const metrics = [
+    { label: "Total Users", value: 1284, icon: "👥", bg: "bg-blue-50" },
+    { label: "Revenue Today", value: "₹25,000", icon: "💰", bg: "bg-green-50" },
+    { label: "New Orders", value: 43, icon: "📦", bg: "bg-yellow-50" },
+  ];
 
   const cards = [
-    {
-      title: "Manage Users",
-      icon: "👥",
-      path: "/admin/users",
-      bg: "bg-blue-100",
-    },
-    {
-      title: "Manage Products",
-      icon: "🛒",
-      path: "/admin/products",
-      bg: "bg-green-100",
-    },
-    {
-      title: "Manage Orders",
-      icon: "📦",
-      path: "/admin/orders",
-      bg: "bg-yellow-100",
-    },
+    { title: "Manage Users", imgSrc: "https://cdn-icons-png.flaticon.com/512/847/847969.png", path: "/admin/users" },
+    { title: "Manage Products", imgSrc: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png", path: "/admin/products" },
+    { title: "Manage Orders", imgSrc: "https://cdn-icons-png.flaticon.com/512/1040/1040230.png", path: "/admin/orders" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center mb-12 text-gray-800 tracking-wide">
-          👨‍💼 Admin Dashboard
-        </h1>
-
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              onClick={() => goTo(card.path)}
-              className={`rounded-2xl shadow-lg p-6 ${card.bg} hover:shadow-xl cursor-pointer transform hover:-translate-y-1 hover:scale-105 transition-all duration-300`}
-            >
-              <div className="text-5xl mb-4">{card.icon}</div>
-              <h2 className="text-2xl font-semibold text-gray-700">{card.title}</h2>
-              <p className="text-gray-600 mt-2 text-sm">
-                Click to view, add or modify {card.title.toLowerCase()}.
-              </p>
-            </div>
-          ))}
-        </div>
+    <Layout>
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-extrabold text-gray-900">Admin Dashboard</h1>
+        <p className="text-gray-500 mt-2">Welcome back, stay in control of everything!</p>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+        {metrics.map((m, i) => (
+          <MetricCard key={i} {...m} />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {cards.map((c, i) => (
+          <DashboardCard
+            key={i}
+            title={c.title}
+            imgSrc={c.imgSrc}
+            onClick={() => navigate(c.path)}
+          />
+        ))}
+      </div>
+    </Layout>
   );
 };
 

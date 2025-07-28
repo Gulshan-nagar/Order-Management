@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from '../../utils/axiosInstance';
+import UserLayout from "../../components/UserLayout";
+
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -37,6 +39,7 @@ const AdminLogin = () => {
   };
 
   return (
+    <UserLayout>
     <div className="login-container">
       <h2>Admin Login</h2>
       <form onSubmit={handleSubmit}>
@@ -58,6 +61,7 @@ const AdminLogin = () => {
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>
+    </UserLayout>
   );
 };
 

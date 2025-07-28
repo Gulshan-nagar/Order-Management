@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 // import uploadImage from "../../utils/uploadImage"
 import { API_PATHS } from "../../utils/apiPaths";
+import Layout from "../../components/Layout";
 
 // ... your imports remain same
 
@@ -118,6 +119,7 @@ const AdminProducts = () => {
   };
 
   return (
+    <Layout>
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Form Section */}
       <div className="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-10">
@@ -248,6 +250,7 @@ const AdminProducts = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 
