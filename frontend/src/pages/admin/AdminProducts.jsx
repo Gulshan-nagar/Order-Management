@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
+// import uploadImage from "../../utils/uploadImage"
 import { API_PATHS } from "../../utils/apiPaths";
+
+// ... your imports remain same
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({ name: "", price: "", stock: "" });
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  // Fetch all products on component mount
   const fetchProducts = async () => {
     try {
       const res = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL);
@@ -22,41 +26,69 @@ const AdminProducts = () => {
     fetchProducts();
   }, []);
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Reset form state
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   const resetForm = () => {
     setFormData({ name: "", price: "", stock: "" });
     setEditId(null);
+    setImage(null);
+    setImagePreview(null);
   };
 
-  // Submit form (add or update product)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("price", formData.price);
+      form.append("stock", formData.stock);
+      if (image) {
+        form.append("image", image);
+      }
+
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
       if (editId) {
-        await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE(editId), formData);
+        await axiosInstance.put(
+          API_PATHS.PRODUCTS.UPDATE(editId),
+          form,
+          config
+        );
         alert("✅ Product updated successfully");
       } else {
-        await axiosInstance.post(API_PATHS.PRODUCTS.CREATE, formData);
+        await axiosInstance.post(API_PATHS.PRODUCTS.CREATE, form, config);
         alert("✅ Product added successfully");
       }
+
       resetForm();
       fetchProducts();
     } catch (error) {
-      console.error("Error saving product:", error);
-      alert("❌ Failed to save product");
+      console.error("Upload error:", error.response?.data || error.message);
+      alert("❌ Failed to upload product. See console for details.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Load selected product data into form for editing
   const handleEdit = (product) => {
     setEditId(product._id);
     setFormData({
@@ -64,12 +96,18 @@ const AdminProducts = () => {
       price: product.price,
       stock: product.stock,
     });
+    setEditId(product._id);
+    setImage(null); // reset image file
+    setImagePreview(
+      product.image ? `http://localhost:5000${product.image}` : null
+    );
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Delete product
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
     try {
       await axiosInstance.delete(API_PATHS.PRODUCTS.DELETE(id));
       fetchProducts();
@@ -82,7 +120,7 @@ const AdminProducts = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Form Section */}
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg mb-10">
+      <div className="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-10">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">
           {editId ? "✏️ Edit Product" : "➕ Add Product"}
         </h2>
@@ -95,7 +133,7 @@ const AdminProducts = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="number"
@@ -104,7 +142,7 @@ const AdminProducts = () => {
             value={formData.price}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="number"
@@ -113,13 +151,26 @@ const AdminProducts = () => {
             value={formData.stock}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full"
+          />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="h-32 object-cover rounded-md border"
+            />
+          )}
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
             >
               {loading ? "Saving..." : editId ? "Update" : "Add"}
             </button>
@@ -127,7 +178,7 @@ const AdminProducts = () => {
               <button
                 type="button"
                 onClick={resetForm}
-                className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition"
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
               >
                 Cancel
               </button>
@@ -137,12 +188,15 @@ const AdminProducts = () => {
       </div>
 
       {/* Product Table Section */}
-      <div className="bg-white p-6 rounded-xl shadow-md">
-        <h3 className="text-xl font-bold mb-4 text-gray-800">📦 Product List</h3>
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h3 className="text-xl font-bold mb-4 text-gray-800">
+          📦 Product List
+        </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full border text-sm">
             <thead>
               <tr className="bg-gray-200 text-left">
+                <th className="p-2">Image</th> {/* ✅ New column */}
                 <th className="p-2">Name</th>
                 <th className="p-2">Price</th>
                 <th className="p-2">Stock</th>
@@ -152,6 +206,17 @@ const AdminProducts = () => {
             <tbody>
               {products.map((product) => (
                 <tr key={product._id} className="border-t hover:bg-gray-50">
+                  <td className="p-2">
+                    {product.image ? (
+                      <img
+                        src={`http://localhost:5000${product.image}`}
+                        alt={product.name}
+                        className="h-16 w-16 object-cover rounded-md border"
+                      />
+                    ) : (
+                      <span className="text-gray-400 italic">No image</span>
+                    )}
+                  </td>
                   <td className="p-2">{product.name}</td>
                   <td className="p-2">₹{product.price}</td>
                   <td className="p-2">{product.stock}</td>
@@ -173,7 +238,7 @@ const AdminProducts = () => {
               ))}
               {products.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="text-center p-4 text-gray-500">
+                  <td colSpan="5" className="text-center p-4 text-gray-500">
                     No products found.
                   </td>
                 </tr>
