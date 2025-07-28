@@ -23,7 +23,7 @@ const server = http.createServer(app);
 
 // Middleware
 app.use(cors({
-  origin: ["https://order-management-1-kt6d.onrender.com", "http://localhost:5173"],
+  origin: "https://order-management-1-kt6d.onrender.com", // ✅ production origin
   credentials: true
 }));
 
@@ -40,13 +40,14 @@ app.use("/api/orders", orderRoutes);
 app.get("/healthz", (req, res) => res.send("Server is healthy ✅"));
 
 // SOCKET.IO setup
-const io = require("socket.io")(server, {
+// server.js ya index.js me
+const io = new Server(httpServer, {
   cors: {
-    origin: ["https://order-management-1-kt6d.onrender.com", "http://localhost:5173"],
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: "https://order-management-1-kt6d.onrender.com",  // ✅ LIVE FRONTEND URL YAHAN LAGAO
+    methods: ["GET", "POST"]
   }
 });
+
 
 // Store connected users
 let connectedUsers = {};
