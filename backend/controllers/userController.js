@@ -23,25 +23,28 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create new user
-    const user = await User.create({ name, email, password, role });
+    // ✅ This is the updated line:
+    const user = await User.create({
+      name,
+      email,
+      password,
+      ...(role && { role }), // only include role if provided
+    });
 
-    // Return token and user info
+    // Return response
     res.status(201).json({
-      token: generateToken(user),
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isAdmin: user.role === "admin",
-      },
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
     });
   } catch (error) {
-    console.error("Register Error:", error);
+    console.error("Register Error:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // @route   POST /api/users/login
 // @desc    Authenticate user and return token
