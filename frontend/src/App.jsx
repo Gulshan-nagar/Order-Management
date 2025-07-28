@@ -12,7 +12,6 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import UserLayout from "./components/UserLayout";
 import TrackOrder from './pages/trackOrder';
 import AdminOrders from './pages/admin/AdminOrders';
-import CreateOrder from "./pages/CreateOrder";
 import ViewOrder from './pages/ViewOrder';
 
 function App() {
@@ -28,7 +27,6 @@ function App() {
         <Route element={<UserLayout />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/create-order" element={<CreateOrder />} />
 
           <Route path="/view-order" element={<ViewOrder />} />
           <Route path="/track-order" element={<TrackOrder />} />

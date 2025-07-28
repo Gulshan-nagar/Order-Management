@@ -1,3 +1,4 @@
+// src/pages/Products.jsx
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
@@ -5,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,73 +21,57 @@ const Products = () => {
     }
   };
 
-  const addToCart = (product) => {
-    const existing = cart.find((item) => item._id === product._id);
-    if (existing) {
-      setCart(
-        cart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
-    }
-  };
-
-  const placeOrder = async () => {
+  const handlePlaceOrder = async (product) => {
     try {
-      const orderItems = cart.map((item) => ({
-        productId: item._id,
-        quantity: item.quantity,
-      }));
+      const orderData = {
+        items: [
+          {
+            product: product._id,
+            quantity: 1,
+          },
+        ],
+      };
 
-      await axiosInstance.post(API_PATHS.ORDER.CREATE_ORDER, {
-        items: orderItems,
-      });
+      // ✅ FIXED: use correct path
+      await axiosInstance.post(API_PATHS.ORDER.CREATE_ORDER, orderData);
 
-      alert("Order placed successfully!");
-      setCart([]);
+      alert("✅ Order placed successfully!");
+      navigate("/view-order");
     } catch (error) {
-      alert("Failed to place order. Please login first.");
-      navigate("/login");
+      console.error("Failed to place order:", error);
+      alert("❌ Failed to place order");
     }
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Products</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {products.map((product) => (
-          <div key={product._id} className="border p-4 rounded-lg shadow">
-            <h3 className="font-semibold">{product.name}</h3>
-            <p>Price: ₹{product.price}</p>
-            <p>Stock: {product.stock}</p>
-            <button
-              onClick={() => addToCart(product)}
-              className="mt-2 px-3 py-1 bg-green-600 text-white rounded"
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">🛍️ Available Products</h2>
 
-      {cart.length > 0 && (
-        <div className="mt-6 border-t pt-4">
-          <h3 className="text-xl font-semibold mb-2">Your Cart</h3>
-          {cart.map((item) => (
-            <p key={item._id}>
-              {item.name} × {item.quantity}
-            </p>
+      {products.length === 0 ? (
+        <p className="text-center text-gray-500">No products found.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {products.map((product) => (
+            <div
+              key={product._id}
+              className="border p-4 rounded-xl shadow hover:shadow-md transition bg-white"
+            >
+              <img
+                src={`http://localhost:5000${product.image}`}
+                alt={product.name}
+                className="w-full h-48 object-cover rounded mb-3"
+              />
+              <h3 className="text-lg font-bold text-gray-800 mb-1">{product.name}</h3>
+              <p className="text-gray-600 mb-1">Price: ₹{product.price}</p>
+              <p className="text-gray-500 text-sm mb-3">Stock: {product.stock}</p>
+              <button
+                onClick={() => handlePlaceOrder(product)}
+                className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+              >
+                ➕ Place Order
+              </button>
+            </div>
           ))}
-          <button
-            onClick={placeOrder}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Place Order
-          </button>
         </div>
       )}
     </div>

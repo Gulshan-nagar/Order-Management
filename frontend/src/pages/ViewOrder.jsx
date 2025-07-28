@@ -1,11 +1,9 @@
-// src/pages/ViewOrder
-// .jsx
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
-import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // Change to Render URL in production
+const socket = io("http://localhost:5000");
 
 const ViewOrder = () => {
   const [orders, setOrders] = useState([]);
@@ -38,35 +36,60 @@ const ViewOrder = () => {
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Your Orders</h2>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-2xl font-bold mb-4 text-center">📦 Your Orders</h2>
+
       {orders.length === 0 ? (
-        <p>No orders found.</p>
+        <p className="text-center text-gray-500">
+          You haven't placed any orders yet.
+        </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6 max-w-4xl mx-auto">
           {orders.map((order) => (
-            <div key={order._id} className="border p-4 rounded shadow bg-white">
-              <p>
+            <div
+              key={order._id}
+              className="border rounded-xl shadow p-4 bg-white"
+            >
+              <p className="text-sm text-gray-500 mb-2">
                 <strong>Order ID:</strong> {order._id}
               </p>
 
               {order.items.map((item, idx) => (
-                <div key={idx} className="pl-4">
-                  <p>
-                    <strong>Product:</strong> {item.product.name}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> ₹{item.product.price}
-                  </p>
-                  <p>
-                    <strong>Quantity:</strong> {item.quantity}
-                  </p>
+                <div
+                  key={idx}
+                  className="flex items-start gap-4 border-t pt-4 mt-2"
+                >
+                  {item.product ? (
+                    <>
+                      <img
+                        src={`http://localhost:5000${item.product.image}`}
+                        alt={item.product.name}
+                        className="w-24 h-24 object-cover rounded"
+                       
+                      />
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {item.product.name}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Price: ₹{item.product.price}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Quantity: {item.quantity}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-red-600">
+                      ⚠️ Product no longer available
+                    </p>
+                  )}
                 </div>
               ))}
 
-              <p>
-                <strong>Status:</strong>
-                <span className="font-semibold text-blue-600 ml-2">
+              <p className="mt-4 text-sm">
+                <strong>Status:</strong>{" "}
+                <span className="text-blue-600 font-semibold">
                   {order.status}
                 </span>
               </p>
