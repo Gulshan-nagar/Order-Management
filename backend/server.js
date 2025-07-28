@@ -23,9 +23,9 @@ const server = http.createServer(app);
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
+  origin: '*'
 }));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,7 +41,7 @@ app.get("/healthz", (req, res) => res.send("Server is healthy ✅"));
 // SOCKET.IO setup
 const io = new Server(server, {
   cors: {
-      origin: 'http://localhost:5173',
+      origin: ['http://localhost:5173',  'https://order-management-1-kt6d.onrender.com'],
     methods: ["GET", "POST"],
      credentials: true,
   },
