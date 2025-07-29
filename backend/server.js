@@ -6,20 +6,19 @@ const { Server } = require("socket.io");
 const path = require("path");
 const connectDB = require("./config/db");
 
-// Load environment variables
+// Load env variables
 dotenv.config();
 
-// Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
 
-// âœ… ALLOW local + deployed frontend URLs
+// ✅ Add your actual deployed frontend URL here
 const allowedOrigins = [
-  "http://localhost:5173", // Local frontend
-  "https://order-management-1-kt6d.onrender.com", // Live frontend
+  "http://localhost:5173",
+  "https://order-management-1-kt6d.onrender.com", // 🔁 Replace with your actual frontend Render URL
 ];
 
-// âœ… CORS middleware
+// ✅ CORS middleware
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -37,7 +36,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static uploads
+// Static file handling
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
@@ -49,31 +48,32 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
-// Health check route
-app.get("/healthz", (req, res) => res.send("Server is healthy âœ…"));
+// Health check
+app.get("/healthz", (req, res) => res.send("✅ Server is healthy"));
 
-// âœ… SOCKET.IO server config
+// ✅ Socket.IO setup with proper config
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ['websocket'], // ✅ Important for Render
 });
 
-// Connected users tracker
+// Track connected users
 let connectedUsers = {};
 
 io.on("connection", (socket) => {
-  console.log("ðŸŸ¢ User connected:", socket.id);
+  console.log("🟢 User connected:", socket.id);
 
   socket.on("register-user", (userId) => {
     connectedUsers[userId] = socket.id;
-    console.log(`ðŸ“² User registered: ${userId} -> ${socket.id}`);
+    console.log(`📱 User registered: ${userId} -> ${socket.id}`);
   });
 
   socket.on("disconnect", () => {
-    console.log("ðŸ”´ User disconnected:", socket.id);
+    console.log("🔴 User disconnected:", socket.id);
     for (let userId in connectedUsers) {
       if (connectedUsers[userId] === socket.id) {
         delete connectedUsers[userId];
@@ -86,11 +86,11 @@ io.on("connection", (socket) => {
 // Export io globally
 module.exports.io = io;
 
-// âœ… Start server after DB connects
+// Start server after DB connection
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
   server.listen(PORT, () => {
-    console.log(`ðŸš€ Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
   });
 });
