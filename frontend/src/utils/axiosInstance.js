@@ -6,6 +6,7 @@ const BASE_URL =
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true, // ✅ IMPORTANT for login, cookies, CORS
 });
 
 // Attach token automatically

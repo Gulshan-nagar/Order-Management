@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS, BASE_URL } from "../utils/apiPaths";
-import { io } from "socket.io-client";
+import socket from "../utils/socket";
 
-const socket = io("https://order-management-4pdd.onrender.com");
 
 const ViewOrder = () => {
   const [orders, setOrders] = useState([]);
@@ -21,19 +20,20 @@ const ViewOrder = () => {
     fetchOrders();
   }, []);
 
-  useEffect(() => {
-    socket.on("orderStatusUpdated", (updatedOrder) => {
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === updatedOrder._id ? updatedOrder : order
-        )
-      );
-    });
+ useEffect(() => {
+  socket.on("order-status-updated", (updatedOrder) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order._id === updatedOrder._id ? updatedOrder : order
+      )
+    );
+  });
 
-    return () => {
-      socket.off("orderStatusUpdated");
-    };
-  }, []);
+  return () => {
+    socket.off("order-status-updated");
+  };
+}, []);
+
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">

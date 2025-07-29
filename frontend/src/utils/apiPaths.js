@@ -1,26 +1,26 @@
-export const BASE_URL = "https://order-management-4pdd.onrender.com";
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const API_PATHS = {
   AUTH: {
-    LOGIN: "/api/users/login",
-    REGISTER: "/api/users/register",
+    LOGIN: `${BASE_URL}/api/users/login`,
+    REGISTER: `${BASE_URL}/api/users/register`,
   },
   ORDER: {
-    CREATE_ORDER: "/api/orders",
-    USER_ORDERS: "/api/orders/user",
-    GET_ORDER_BY_ID: (id) => `/api/orders/${id}`,
-    GET_ALL_ORDERS: "/api/orders",
-    UPDATE_ORDER_STATUS: (id) => `/api/orders/${id}/status`,
+    CREATE_ORDER: `${BASE_URL}/api/orders`,
+    USER_ORDERS: `${BASE_URL}/api/orders/user`,
+    GET_ORDER_BY_ID: (id) => `${BASE_URL}/api/orders/${id}`,
+    GET_ALL_ORDERS: `${BASE_URL}/api/orders`,
+    UPDATE_ORDER_STATUS: (id) => `${BASE_URL}/api/orders/${id}/status`,
   },
   PRODUCTS: {
-    GET_ALL: "/api/products",
-    CREATE: "/api/products",
-    UPDATE: (id) => `/api/products/${id}`,
-    DELETE: (id) => `/api/products/${id}`,
+    GET_ALL: `${BASE_URL}/api/products`,
+    CREATE: `${BASE_URL}/api/products`,
+    UPDATE: (id) => `${BASE_URL}/api/products/${id}`,
+    DELETE: (id) => `${BASE_URL}/api/products/${id}`,
   },
   USERS: {
-    GET_ALL: "/api/users",
-    DELETE: (id) => `/api/users/${id}`,
-    UPDATE: (id) => `/api/users/${id}`,
+    GET_ALL: `${BASE_URL}/api/users`,
+    DELETE: (id) => `${BASE_URL}/api/users/${id}`,
+    UPDATE: (id) => `${BASE_URL}/api/users/${id}`,
   },
 };

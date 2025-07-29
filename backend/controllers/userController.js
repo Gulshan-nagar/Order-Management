@@ -49,38 +49,27 @@ exports.registerUser = async (req, res) => {
 // @route   POST /api/users/login
 // @desc    Authenticate user and return token
 // @access  Public
-exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  console.log("🟡 Login request received:", req.body); // Add this
 
-    // Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+  const user = await User.findOne({ email });
 
-    // Check password
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    // Return token and user info
+  if (user && (await user.matchPassword(password))) {
+    const token = generateToken(user);
     res.status(200).json({
-      token: generateToken(user),
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isAdmin: user.role === "admin",
-      },
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token,
     });
-  } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ message: "Server error" });
+  } else {
+    res.status(401);
+    throw new Error("Invalid email or password");
   }
-};
+});
+
 // @route   GET /api/users
 // @desc    Get all users (Admin only)
 // @access  Private/Admin
