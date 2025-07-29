@@ -49,7 +49,7 @@ exports.registerUser = async (req, res) => {
 // @route   POST /api/users/login
 // @desc    Authenticate user and return token
 // @access  Public
-export const loginUser = asyncHandler(async (req, res) => {
+exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log("🟡 Login request received:", req.body); // Add this
 
