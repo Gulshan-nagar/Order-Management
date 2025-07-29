@@ -1,8 +1,8 @@
 // src/pages/Login.jsx
-import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../utils/apiPaths";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,29 +11,34 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    const cleanedEmail = email.trim().toLowerCase();
+
+    if (!cleanedEmail.includes("@")) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     try {
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
-        email,
+        email: cleanedEmail,
         password,
       });
 
-      const { token, user } = response.data;
+      const { token, role, name, _id } = response.data;
+      const user = { _id, name, email: cleanedEmail, role };
 
-      // Store token and user
       localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify(user)); // ← Store user with isAdmin
+      localStorage.setItem("userInfo", JSON.stringify(user));
 
-      alert("Login successful");
-
-      // Redirect based on role
-      if (user.isAdmin) {
+      if (role === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/home");
       }
     } catch (error) {
-      const message = error.response?.data?.message || "Login failed";
-      alert(message);
+      console.error("Login error:", error);
+      alert("Login failed. Please check your credentials.");
     }
   };
 

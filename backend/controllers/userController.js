@@ -59,12 +59,14 @@ exports.loginUser = asyncHandler(async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     const token = generateToken(user);
     res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token,
-    });
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role, // ✅ Add this
+  isAdmin: user.role === "admin", 
+  token: generateToken(user), // ✅ Pass the full user object
+});
+
   } else {
     res.status(401);
     throw new Error("Invalid email or password");
