@@ -2,7 +2,8 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/button";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -29,8 +30,8 @@ const Cart = () => {
     }));
 
     try {
-      await axios.post(
-        "https://your-backend.onrender.com/api/orders",
+      await axiosInstance.post(
+        API_PATHS.ORDER.CREATE_ORDER,
         { items: orderItems },
         {
           headers: {
@@ -40,7 +41,7 @@ const Cart = () => {
       );
 
       clearCart();
-      navigate("/view-order", { state: { orderPlaced: true } }); // ✅ Pass flag
+      navigate("/view-order", { state: { orderPlaced: true } });
     } catch (error) {
       console.error("❌ Checkout failed:", error);
       alert("Something went wrong during checkout.");

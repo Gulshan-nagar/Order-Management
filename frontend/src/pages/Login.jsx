@@ -31,6 +31,10 @@ function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("userInfo", JSON.stringify(user));
 
+      // Clear input fields after successful login
+      setEmail("");
+      setPassword("");
+
       if (role === "admin") {
         navigate("/admin/dashboard");
       } else {
@@ -43,8 +47,14 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-white px-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center">
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1650&q=80')", // ✅ Food/Order-themed background
+      }}
+    >
+      <div className="bg-white bg-opacity-90 backdrop-blur-md p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
         <img
           src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
           alt="Order Management"
@@ -72,14 +82,14 @@ function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold"
           >
             Login
           </button>
         </form>
         <p className="mt-4 text-sm text-gray-600">
           Don't have an account?{" "}
-          <Link to="/" className="text-blue-600 hover:underline">
+          <Link to="/" className="text-blue-700 font-medium hover:underline">
             Register here
           </Link>
         </p>

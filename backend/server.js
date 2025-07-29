@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // ✅ Add your actual deployed frontend URL here
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://order-management-1-kt6d.onrender.com", // 🔁 Replace with your actual frontend Render URL
+  "hcomttps://order-management-1-kt6d.onrender.",
 ];
 
 // ✅ CORS middleware

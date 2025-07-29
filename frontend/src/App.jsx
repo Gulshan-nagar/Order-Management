@@ -15,6 +15,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import UserLayout from "./components/UserLayout";
 import AdminOrders from './pages/admin/AdminOrders';
 import ViewOrder from './pages/ViewOrder';
+import Cart from './pages/Cart';
 
 function App() {
 
@@ -47,8 +48,9 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/products" element={<Products />} />
           <Route path="/view-order" element={<ViewOrder />} />
+          <Route path="/cart" element={<Cart/>} />
         </Route>
-
+        
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
