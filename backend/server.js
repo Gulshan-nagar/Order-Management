@@ -41,7 +41,7 @@ app.get("/healthz", (req, res) => res.send("Server is healthy ✅"));
 
 // SOCKET.IO setup
 // server.js ya index.js me
-const io = new Server(httpServer, {
+const io = new Server(server, {
   cors: {
     origin: "https://order-management-1-kt6d.onrender.com",  // ✅ LIVE FRONTEND URL YAHAN LAGAO
     methods: ["GET", "POST"]
@@ -72,10 +72,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ✅ These are already available in CommonJS:
-console.log(__dirname); // current directory
-console.log(__filename); // 
-// Make io available for other files (like controllers)
+
 module.exports.io = io;
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

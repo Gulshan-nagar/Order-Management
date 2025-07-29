@@ -37,7 +37,7 @@ exports.registerUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user),
     });
   } catch (error) {
     console.error("Register Error:", error.message);
