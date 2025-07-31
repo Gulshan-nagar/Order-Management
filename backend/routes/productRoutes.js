@@ -5,6 +5,7 @@ const {
   getAllProducts,
   updateProduct,
   deleteProduct,
+  bulkCreateProducts,
 } = require("../controllers/productController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware"); // ✅ Import multer middleware
@@ -14,6 +15,8 @@ router.get("/", getAllProducts);
 
 // Protected: Admin only routes
 router.post("/", protect, adminOnly, upload.single("image"), createProduct); // ✅ Add image upload here
+router.post("/bulk", protect, adminOnly, bulkCreateProducts);
+
 router.put("/:id", protect, adminOnly, upload.single("image"), updateProduct);
 router.delete("/:id", protect, adminOnly, deleteProduct);
 

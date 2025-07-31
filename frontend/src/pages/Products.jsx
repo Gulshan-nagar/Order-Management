@@ -9,7 +9,7 @@ const Products = () => {
   const [sortBy, setSortBy] = useState("name");
   const [viewMode, setViewMode] = useState("grid");
 
-  const categories = ["All", "Food", "Electronics", "Fashion", "Home", "Books", "Sports"];
+const categories = ["All", "Food", "Electronics & Gadgets", "Fashion", "Home", "Books", "Sports"];
 
   const filteredProducts = selectedCategory === "All" 
     ? products 

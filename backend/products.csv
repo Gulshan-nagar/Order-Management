@@ -1,0 +1,6 @@
+_id,name,image,price,description,category,stock
+1,Wireless Headphones,product_1.jpeg,59,"High-quality sound with noise cancellation and Bluetooth connectivity.",Electronics & Gadgets,50
+2,Smartphone,product_2.jpeg,499,"Latest smartphone with high-resolution display and fast processor.",Electronics & Gadgets,30
+3,Laptop,product_3.jpeg,799,"Powerful laptop suitable for work, gaming, and multimedia.",Electronics & Gadgets,20
+4,Smartwatch,product_4.jpeg,129,"Track your fitness and receive notifications on the go.",Electronics & Gadgets,40
+5,Bluetooth Speaker,product_5.jpeg,45,"Portable speaker with deep bass and long battery life.",Electronics & Gadgets,60

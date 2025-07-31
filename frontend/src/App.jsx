@@ -42,7 +42,7 @@ function App() {
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-
+        
         {/* Routes with Header */}
         <Route element={<UserLayout />}>
           <Route path="/home" element={<HomePage />} />

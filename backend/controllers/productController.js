@@ -1,13 +1,12 @@
 const Product = require("../models/Product");
 
 // @desc Create new product (admin only)
-// Assuming: Product has 'image' field
 exports.createProduct = async (req, res) => {
   try {
     console.log("Received file:", req.file);
-      console.log("Body:", req.body);
+    console.log("Body:", req.body);
 
-    const { name, price, description, stock } = req.body;
+    const { name, price, description, stock, category } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
 
     const product = new Product({
@@ -15,6 +14,7 @@ exports.createProduct = async (req, res) => {
       price,
       stock,
       description,
+      category,
       image: imagePath,
       createdBy: req.user._id,
     });
@@ -26,6 +26,29 @@ exports.createProduct = async (req, res) => {
     res.status(500).json({ message: "Failed to create product" });
   }
 };
+
+// @desc Bulk create products (admin only)
+exports.bulkCreateProducts = async (req, res) => {
+  try {
+    const products = req.body.products;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ message: "No product data provided" });
+    }
+
+    const productsWithUser = products.map((p) => ({
+      ...p,
+      createdBy: req.user._id,
+    }));
+
+    const savedProducts = await Product.insertMany(productsWithUser);
+    res.status(201).json(savedProducts);
+  } catch (error) {
+    console.error("Bulk product creation error:", error);
+    res.status(500).json({ message: "Failed to bulk create products" });
+  }
+};
+
 
 
 
@@ -62,6 +85,8 @@ exports.updateProduct = async (req, res) => {
     product.name = req.body.name || product.name;
     product.price = req.body.price || product.price;
     product.stock = req.body.stock || product.stock;
+    product.description = req.body.description || product.description;
+    product.category = req.body.category || product.category;
     
     if (req.file) {
    product.image = `/uploads/${req.file.filename}`;
