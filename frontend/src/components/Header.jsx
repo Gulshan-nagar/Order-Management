@@ -1,122 +1,175 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS } from "../utils/apiPaths";
-import { Bell, LogOut, Menu, X } from "lucide-react";
+// src/components/Header.jsx
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, ShoppingCart, User, Menu, MapPin, LogOut } from "lucide-react";
+import { StoreContext } from "../context/StoreContext";
 
 const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // for mobile menu toggle
+  const { getTotalCartItems, logout } = useContext(StoreContext);
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("userInfo"));
-    if (storedUser) {
-      setUser(storedUser);
-    }
-  }, []);
+  const user = JSON.parse(localStorage.getItem("userInfo"));
+  const cartCount = getTotalCartItems();
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post(API_PATHS.LOGOUT, {});
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-    localStorage.removeItem("userInfo");
-    navigate("/login");
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const handleNav = (path) => {
+    navigate(path);
+    setIsMenuOpen(false); // close on mobile
   };
 
   return (
-    <header className="relative text-white shadow-lg">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 h-full w-full bg-cover bg-center brightness-75"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=1400&q=80')",
-        }}
-      ></div>
-
-      {/* Navbar */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<header className="bg-[#1f2937] text-white sticky top-0 z-50 shadow-md">
+      {/* Top Bar */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-3 cursor-pointer">
-          <h1 className="text-3xl font-bold tracking-wider text-yellow-300">OMS</h1>
-        </Link>
-
-        {/* Hamburger Menu Icon (Mobile only) */}
-        <button
-          className="text-white md:hidden"
-          onClick={() => setIsOpen(!isOpen)}
+        <div
+          className="text-2xl font-bold cursor-pointer"
+          onClick={() => navigate("/")}
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          Shop<span className="text-primary">Zone</span>
+        </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-6 text-base font-medium items-center">
-          <Link to="/home" className="hover:text-yellow-300 transition">
-            Home
-          </Link>
-          <Link to="/products" className="hover:text-yellow-300 transition">
-            Products
-          </Link>
-          <Link to="/view-order" className="hover:text-yellow-300 transition">
-            My Orders
-          </Link>
-          <Link to="/cart" className="hover:text-yellow-300 transition">
-            🛒 Cart
-          </Link>
-          <Bell className="w-5 h-5 mt-[2px] hover:text-yellow-300 cursor-pointer" />
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg flex items-center space-x-2 transition"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
+        {/* Location (only desktop) */}
+        <div className="hidden md:flex items-center gap-2 text-sm text-white/80">
+          <MapPin className="w-4 h-4" />
+          <div>
+            <div className="text-xs">Deliver to</div>
+            <div className="font-medium">India 110001</div>
+          </div>
+        </div>
+
+        {/* Search bar (desktop only) */}
+        <div className="hidden md:block flex-1 mx-6">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="w-full px-4 py-2 rounded-lg border-2 border-primary/20 focus:border-primary focus:outline-none"
+            />
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground p-1.5 rounded-md">
+              <Search className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4">
+          {/* Account & Orders */}
+          {user ? (
+            <div className="hidden md:flex flex-col text-sm">
+              <span className="font-semibold">Hi, {user.name}</span>
+              <button
+                onClick={() => handleNav("/view-order")}
+                className="hover:text-primary"
+              >
+                Orders
+              </button>
+            </div>
           ) : (
-            <Link to="/login" className="hover:text-yellow-300 transition">
-              Login
-            </Link>
+            <button
+              onClick={() => handleNav("/login")}
+              className="hidden md:flex flex-col text-sm hover:text-primary"
+            >
+              <span>Hello, sign in</span>
+              <span className="font-medium">Account & Lists</span>
+            </button>
           )}
-        </nav>
+
+          {/* Cart */}
+          <button
+            onClick={() => handleNav("/cart")}
+            className="relative flex items-center gap-1 hover:text-primary"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+            <span className="hidden md:block font-medium">Cart</span>
+          </button>
+
+          {/* Logout (if logged in) */}
+          {user && (
+            <button onClick={handleLogout} className="hidden md:block">
+              <LogOut className="w-5 h-5 hover:text-red-500" />
+            </button>
+          )}
+
+          {/* Hamburger Menu */}
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Nav Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-black bg-opacity-90 backdrop-blur-sm px-6 py-4 space-y-4 text-white text-base font-medium">
-          <Link to="/home" onClick={() => setIsOpen(false)} className="block hover:text-yellow-300">
-            Home
-          </Link>
-          <Link to="/products" onClick={() => setIsOpen(false)} className="block hover:text-yellow-300">
-            Products
-          </Link>
-          <Link to="/view-order" onClick={() => setIsOpen(false)} className="block hover:text-yellow-300">
+      {/* Nav Links (Desktop only) */}
+      <div className="hidden md:flex gap-6 bg-secondary/90 px-4 py-2 text-sm max-w-7xl mx-auto">
+        <button onClick={() => handleNav("/products")} className="hover:text-primary">
+          Today's Deals
+        </button>
+       <button
+  onClick={() => handleNav("/category/Electronics")}
+  className="hover:text-primary"
+>
+  Electronics
+</button>
+
+        <button onClick={() => alert("Fashion coming soon")} className="hover:text-primary">
+          Fashion
+        </button>
+        <button onClick={() => alert("Home & Kitchen coming soon")} className="hover:text-primary">
+          Home & Kitchen
+        </button>
+        <button onClick={() => alert("Books coming soon")} className="hover:text-primary">
+          Books
+        </button>
+        <button onClick={() => alert("Sports coming soon")} className="hover:text-primary">
+          Sports
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-secondary/95 px-4 py-4 space-y-3">
+          <input
+            type="text"
+            placeholder="Search products..."
+            className="w-full px-4 py-2 rounded-lg border-2 border-primary/20 focus:border-primary focus:outline-none mb-2"
+          />
+          {!user && (
+            <button
+              onClick={() => handleNav("/login")}
+              className="block w-full text-left hover:text-primary"
+            >
+              Sign In
+            </button>
+          )}
+          <button onClick={() => handleNav("/products")} className="block w-full text-left hover:text-primary">
+            All Products
+          </button>
+       <button onClick={() => navigate("/category/Electronics")}>Electronics</button>
+
+
+          <button onClick={() => handleNav("/view-order")} className="block w-full text-left hover:text-primary">
             My Orders
-          </Link>
-          <Link to="/cart" onClick={() => setIsOpen(false)} className="block hover:text-yellow-300">
-            🛒 Cart
-          </Link>
-          <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 hover:text-yellow-300" />
-            {user ? (
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  handleLogout();
-                }}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
-            ) : (
-              <Link to="/login" onClick={() => setIsOpen(false)} className="hover:text-yellow-300">
-                Login
-              </Link>
-            )}
-          </div>
+          </button>
+          <button onClick={() => handleNav("/cart")} className="block w-full text-left hover:text-primary">
+            My Cart
+          </button>
+          {user && (
+            <button onClick={handleLogout} className="block w-full text-left hover:text-red-400">
+              Logout
+            </button>
+          )}
         </div>
       )}
     </header>

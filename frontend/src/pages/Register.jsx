@@ -19,8 +19,10 @@ function Register() {
       setForm({ name: '', email: '', password: '' }); // ✅ clear form
       navigate('/login');
     } catch (err) {
-      alert('Registration failed');
-    }
+  console.error(err?.response?.data || err.message);
+  alert(err?.response?.data?.message || 'Registration failed');
+}
+
   };
 
   return (
