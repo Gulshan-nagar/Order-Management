@@ -2,11 +2,11 @@
 import Header from './Header';
 import { Outlet } from 'react-router-dom';
 
-const UserLayout = () => {
+const UserLayout = ({ searchQuery, setSearchQuery }) => {
   return (
     <>
-      <Header />
-      <Outlet />
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <Outlet context={{ searchQuery }} />
     </>
   );
 };
