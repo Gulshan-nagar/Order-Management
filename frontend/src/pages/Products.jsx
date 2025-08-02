@@ -26,19 +26,21 @@ const Products = () => {
     "Sports & Outdoors",
   ];
 
-  const categorizedProducts = products.map((p) => ({
-    ...p,
-    category: p.category || "Food",
-  }));
+const categorizedProducts = products || [];
 
-  const filteredProducts = categorizedProducts.filter((item) => {
-    const matchesCategory =
-      selectedCategory === "All" || item.category === selectedCategory;
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+
+
+
+const filteredProducts = categorizedProducts.filter((item) => {
+  const matchesCategory =
+    selectedCategory === "All" ||
+    item.category?.toLowerCase() === selectedCategory.toLowerCase();
+  const matchesSearch = item.name
+    .toLowerCase()
+    .includes(searchQuery.toLowerCase());
+  return matchesCategory && matchesSearch;
+});
+
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {

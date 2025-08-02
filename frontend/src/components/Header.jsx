@@ -24,23 +24,22 @@ const Header = ({ searchQuery, setSearchQuery }) => {
     setUser(storedUser ? JSON.parse(storedUser) : null);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    localStorage.removeItem("token");
+   const handleLogout = () => {
+    // Clear user data (if stored in localStorage)
     localStorage.removeItem("userInfo");
-    setUser(null);
+    // Redirect to login page
     navigate("/login");
   };
 
   const handleNav = (path) => {
     navigate(path);
-    setIsMenuOpen(false);
+    setIsMenuOpen(false); // Close mobile menu
   };
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setSearchQuery(value); // <-- Pass value up
-    navigate("/products"); // Optional: redirect to products
+    setSearchQuery(value);
+    navigate("/products");
   };
 
   return (
@@ -48,8 +47,8 @@ const Header = ({ searchQuery, setSearchQuery }) => {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <div
-          className="text-2xl font-bold cursor-pointer"
-          onClick={() => navigate("/products")}
+          className="text-2xl font-bold cursor-pointer hover:text-orange-500 transition"
+          onClick={() => handleNav("/products")}
         >
           Shop<span className="text-orange-500">Zone</span>
         </div>
@@ -82,11 +81,11 @@ const Header = ({ searchQuery, setSearchQuery }) => {
         {/* Actions */}
         <div className="flex items-center gap-4">
           {user ? (
-            <div className="hidden md:flex flex-col text-sm">
+            <div className="hidden md:flex flex-col text-sm cursor-pointer">
               <span className="font-semibold">Hi, {user.name}</span>
               <button
                 onClick={() => handleNav("/view-order")}
-                className="hover:text-orange-400"
+                className="hover:text-orange-400 text-left"
               >
                 Orders
               </button>
@@ -94,7 +93,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
           ) : (
             <button
               onClick={() => handleNav("/login")}
-              className="hidden md:flex flex-col text-sm hover:text-orange-400"
+              className="hidden md:flex flex-col text-sm hover:text-orange-400 text-left"
             >
               <span>Hello, sign in</span>
               <span className="font-medium">Account & Lists</span>
@@ -117,13 +116,20 @@ const Header = ({ searchQuery, setSearchQuery }) => {
 
           {/* Logout */}
           {user && (
-            <button onClick={handleLogout} className="hidden md:block">
-              <LogOut className="w-5 h-5 hover:text-red-500" />
+            <button
+              onClick={handleLogout}
+              className="hidden md:block hover:text-red-400"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           )}
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
@@ -131,12 +137,13 @@ const Header = ({ searchQuery, setSearchQuery }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-800 px-4 py-4 space-y-3">
+        <div className="md:hidden bg-gray-800 px-4 py-4 space-y-4">
+          {/* Search */}
           <div className="relative">
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full px-4 py-2 rounded-lg border-2 border-orange-400 focus:outline-none mb-3"
+              className="w-full px-4 py-2 rounded-lg border-2 border-orange-400 focus:outline-none"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -145,6 +152,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
             </div>
           </div>
 
+          {/* Mobile Links */}
           {!user && (
             <button
               onClick={() => handleNav("/login")}
