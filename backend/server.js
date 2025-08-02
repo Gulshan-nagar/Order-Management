@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // ✅ Add your actual deployed frontend URL here
 const allowedOrigins = [
   "http://localhost:5173",
-  "hcomttps://order-management-1-kt6d.onrender.",
+  "https://order-management-1-kt6d.onrender.com",
 ];
 
 // ✅ CORS middleware
@@ -64,7 +64,7 @@ const io = new Server(server, {
 // Track connected users
 let connectedUsers = {};
 
-io.on("connection", (socket) => {
+io.on("conrenderonnection", (socket) => {
   console.log("🟢 User connected:", socket.id);
 
   socket.on("register-user", (userId) => {
