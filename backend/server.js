@@ -64,7 +64,7 @@ const io = new Server(server, {
 // Track connected users
 let connectedUsers = {};
 
-io.on("conrenderonnection", (socket) => {
+io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
 
   socket.on("register-user", (userId) => {

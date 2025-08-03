@@ -31,6 +31,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
     navigate("/login");
   };
 
+  
   const handleNav = (path) => {
     navigate(path);
     setIsMenuOpen(false); // Close mobile menu
