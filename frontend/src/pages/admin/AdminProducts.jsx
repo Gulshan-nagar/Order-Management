@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS, BASE_URL } from "../../utils/apiPaths";
+import { API_PATHS } from "../../utils/apiPaths";
 import Layout from "../../components/Layout";
+import { getImageUrl } from "../../utils/getImageUrl"; 
+
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -86,7 +88,7 @@ const AdminProducts = () => {
       description: product.description || "",
     });
     setImage(null);
-    setImagePreview(product.image ? `${BASE_URL}${product.image}` : null);
+setImagePreview(product.image ? `${product.image}` : null); // just in case
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -145,7 +147,7 @@ const AdminProducts = () => {
                 <tr key={product._id} className="border-t hover:bg-gray-50">
                   <td className="p-2">
                     {product.image ? (
-                      <img src={`${BASE_URL}${product.image}`} alt={product.name} className="h-16 w-16 object-cover rounded-md border" />
+                     <img src={getImageUrl(product.image)} alt={product.name} className="h-16 w-16 object-cover rounded-md border" />
                     ) : (
                       <span className="text-gray-400 italic">No image</span>
                     )}

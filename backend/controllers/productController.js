@@ -1,13 +1,32 @@
 const Product = require("../models/Product");
-
+const cloudinary = require("cloudinary").v2;
+const Product = require("../models/Product");
+const fs = require("fs");
 // @desc Create new product (admin only)
+
+// Setup Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadToCloudinary = async (filePath) => {
+  const result = await cloudinary.uploader.upload(filePath, {
+    folder: "products",
+  });
+  fs.unlinkSync(filePath); // remove local file after upload
+  return result.secure_url;
+};
+
 exports.createProduct = async (req, res) => {
   try {
-    console.log("Received file:", req.file);
-    console.log("Body:", req.body);
-
     const { name, price, description, stock, category } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
+
+    let imageUrl = "";
+    if (req.file) {
+      imageUrl = await uploadToCloudinary(req.file.path);
+    }
 
     const product = new Product({
       name,
@@ -15,7 +34,7 @@ exports.createProduct = async (req, res) => {
       stock,
       description,
       category,
-      image: imagePath,
+      image: imageUrl,
       createdBy: req.user._id,
     });
 
@@ -26,6 +45,7 @@ exports.createProduct = async (req, res) => {
     res.status(500).json({ message: "Failed to create product" });
   }
 };
+
 
 // @desc Bulk create products (admin only)
 exports.bulkCreateProducts = async (req, res) => {
@@ -65,37 +85,29 @@ exports.getAllProducts = async (req, res) => {
 };
 
       // @desc Update a product (admin only)
-exports.updateProduct = async (req, res) => {
+// controllers/productController.js
+const updateProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
+    const { id } = req.params;
+    const { name, description, price, category } = req.body;
+    const product = await Product.findById(id);
 
-    // Pehle product ko find karo
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    product.name = name || product.name;
+    product.description = description || product.description;
+    product.price = price || product.price;
+    product.category = category || product.category;
+
+    // ✅ Check if a new file is uploaded
+    if (req.file) {
+      product.image = `/uploads/${req.file.filename}`;
     }
-    if (req.file) {
-  product.image = `/uploads/${req.file.filename}`;
-}
 
-
-    // Check for new image
-    
-     // Update fields
-    product.name = req.body.name || product.name;
-    product.price = req.body.price || product.price;
-    product.stock = req.body.stock || product.stock;
-    product.description = req.body.description || product.description;
-    product.category = req.body.category || product.category;
-    
-    if (req.file) {
-   product.image = `/uploads/${req.file.filename}`;
- }
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);
   } catch (error) {
-    console.error("Update product error:", error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: error.message });
   }
 };
 
