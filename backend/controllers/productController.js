@@ -85,7 +85,7 @@ exports.getAllProducts = async (req, res) => {
 
       // @desc Update a product (admin only)
 // controllers/productController.js
-const updateProduct = async (req, res) => {
+exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, price, category } = req.body;
