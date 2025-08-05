@@ -10,22 +10,15 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadToCloudinary = async (filePath) => {
-  const result = await cloudinary.uploader.upload(filePath, {
-    folder: "products",
-  });
-  fs.unlinkSync(filePath); // remove local file after upload
-  return result.secure_url;
-};
 
 exports.createProduct = async (req, res) => {
   try {
     const { name, price, description, stock, category } = req.body;
 
     let imageUrl = "";
-    if (req.file) {
-      imageUrl = await uploadToCloudinary(req.file.path);
-    }
+    if (req.file && req.file.path) {
+  imageUrl = req.file.path; 
+}
 
     const product = new Product({
       name,
@@ -94,9 +87,9 @@ exports.updateProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    if (req.file) {
-      product.image = `/uploads/${req.file.filename}`;
-    }
+    if (req.file && req.file.path) {
+  product.image = req.file.path; // ✅ Cloudinary gives full URL
+}
 
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);

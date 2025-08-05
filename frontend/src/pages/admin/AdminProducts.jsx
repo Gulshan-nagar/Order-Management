@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import Layout from "../../components/Layout";
-import { getImageUrl } from "../../utils/getImageUrl"; 
+// import { getImageUrl } from "../../utils/getImageUrl"; 
 
 
 const AdminProducts = () => {
@@ -50,33 +50,32 @@ const AdminProducts = () => {
     setImagePreview(null);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const form = new FormData();
-      Object.entries(formData).forEach(([key, value]) => form.append(key, value));
-      if (image) form.append("image", image);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const form = new FormData();
+    Object.entries(formData).forEach(([key, value]) => form.append(key, value));
+    if (image) form.append("image", image);
 
-      const config = { headers: { "Content-Type": "multipart/form-data" } };
-
-      if (editId) {
-        await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE(editId), form, config);
-        alert("✅ Product updated successfully");
-      } else {
-        await axiosInstance.post(API_PATHS.PRODUCTS.CREATE, form, config);
-        alert("✅ Product added successfully");
-      }
-
-      resetForm();
-      fetchProducts();
-    } catch (error) {
-      console.error("Upload error:", error.response?.data || error.message);
-      alert("❌ Failed to upload product. See console for details.");
-    } finally {
-      setLoading(false);
+    if (editId) {
+      await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE(editId), form);
+      alert("✅ Product updated successfully");
+    } else {
+      await axiosInstance.post(API_PATHS.PRODUCTS.CREATE, form);
+      alert("✅ Product added successfully");
     }
-  };
+
+    resetForm();
+    fetchProducts();
+  } catch (error) {
+    console.error("Upload error:", error.response?.data || error.message);
+    alert("❌ Failed to upload product. See console for details.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleEdit = (product) => {
     setEditId(product._id);
@@ -147,7 +146,7 @@ setImagePreview(product.image ? `${product.image}` : null); // just in case
                 <tr key={product._id} className="border-t hover:bg-gray-50">
                   <td className="p-2">
                     {product.image ? (
-                     <img src={getImageUrl(product.image)} alt={product.name} className="h-16 w-16 object-cover rounded-md border" />
+                     <img src={product.image} alt={product.name} className="h-16 w-16 object-cover rounded-md border" />
                     ) : (
                       <span className="text-gray-400 italic">No image</span>
                     )}
