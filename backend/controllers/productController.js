@@ -87,18 +87,13 @@ exports.getAllProducts = async (req, res) => {
 // controllers/productController.js
 exports.updateProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, description, price, category } = req.body;
-    const product = await Product.findById(id);
+    const productId = req.params.id;
 
-    if (!product) return res.status(404).json({ message: "Product not found" });
-
-    product.name = name || product.name;
-    product.description = description || product.description;
-    product.price = price || product.price;
-    product.category = category || product.category;
-
-    // ✅ Check if a new file is uploaded
+    // Pehle product ko find karo
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     if (req.file) {
       product.image = `/uploads/${req.file.filename}`;
     }
@@ -106,9 +101,11 @@ exports.updateProduct = async (req, res) => {
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Update product error:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 
 
