@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -14,12 +15,16 @@
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^1.41.3",
     "clsx": "^2.1.1",
     "lucide-react": "^0.528.0",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "papaparse": "^5.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.1",
+    "react-toastify": "^11.0.5",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11"

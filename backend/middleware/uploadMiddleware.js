@@ -4,10 +4,15 @@ const path = require("path");
 // Configure storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "../uploads/"));
+        const uploadPath = path.join(__dirname, "../uploads/");
+        console.log("📁 Upload destination set to:", uploadPath);
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
+        const filename = `${Date.now()}-${file.originalname}`;
+        console.log("📝 Generated filename:", filename);
+        console.log("📝 File will be stored as relative path: uploads/" + filename);
+        cb(null, filename);
     },
 });
 

@@ -45,7 +45,10 @@ const StoreContextProvider = (props) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        console.log("🔍 StoreContext: Fetching products from API...");
         const response = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL);
+        console.log("✅ StoreContext: Products received:", response.data);
+        console.log("🖼️ StoreContext: Image paths in products:", response.data.map(p => ({ name: p.name, image: p.image })));
         setProducts(response.data);
         setLoading(false);
       } catch (error) {

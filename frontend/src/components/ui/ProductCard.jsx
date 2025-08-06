@@ -1,4 +1,4 @@
-import { BASE_URL } from "../../utils/apiPaths";
+import { getImageUrl } from "../../utils/getImageUrl";
 import { Star, ShoppingCart, Heart } from "lucide-react";
 
 const ProductCard = ({ product, onAddToCart }) => (
@@ -6,7 +6,7 @@ const ProductCard = ({ product, onAddToCart }) => (
     <div className="relative overflow-hidden rounded-lg mb-3">
       {product.image && (
         <img
-          src={`${BASE_URL}${product.image}`}
+          src={getImageUrl(product.image)}
           alt={product.name}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />

@@ -2,14 +2,16 @@ import React, { useContext } from "react";
 import "./ProductDisplay.css";
 import { StoreContext } from "../context/StoreContext"; 
 import ProductItem from "./ProductItem"; 
+import { getImageUrl } from "../utils/getImageUrl";
+
 const ProductDisplay = ({ category }) => {
-  const { Product_list } = useContext(StoreContext);
+  const { products } = useContext(StoreContext);
   return (
     <div className="product-display" id="product-display">
       <h2>Top products for you</h2>
       <div className="product-display-list">
-        {Product_list.map((item, index) => {
-          if ((category = "All" || category === item.category)) {
+        {products.map((item, index) => {
+          if (category === "All" || category === item.category) {
             return (
               <ProductItem
                 key={index}
@@ -17,7 +19,7 @@ const ProductDisplay = ({ category }) => {
                 name={item.name}
                 description={item.description}
                 price={item.price}
-                image={item.image}
+                image={getImageUrl(item.image)}
               />
             );
           }
