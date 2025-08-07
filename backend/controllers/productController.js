@@ -14,6 +14,8 @@ exports.createProduct = async (req, res) => {
   console.log("🚀 Backend: CREATE PRODUCT started");
   console.log("📝 Backend: req.body:", req.body);
   console.log("🖼️ Backend: req.file:", req.file);
+  console.log("🔍 Backend: req.files:", req.files);
+  console.log("🌐 Backend: Request source:", req.get('User-Agent'));
   
   try {
     const { name, price, stock, description, category } = req.body;
@@ -25,26 +27,38 @@ exports.createProduct = async (req, res) => {
 
     let image = "";
     if (req.file) {
-      // Ensure ONLY filename is used, strip any absolute path
-      const filename = req.file.filename || req.file.originalname;
+      // Always use consistent relative path format
+      const filename = req.file.filename;
       image = `uploads/${filename}`;
-      console.log("📎 Backend: Image path set to (relative):", image);
-      console.log("📎 Backend: req.file.path was:", req.file.path);
+      console.log("📎 Backend: Image path set to (consistent format):", image);
+      console.log("📎 Backend: File details:", {
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        path: req.file.path,
+        size: req.file.size
+      });
+    } else {
+      console.log("⚠️ Backend: No file received in req.file");
     }
 
     const product = new Product({
       name,
-      price,
-      stock,
+      price: Number(price),
+      stock: Number(stock), 
       description,
       category,
       image,
       createdBy: req.user._id,
     });
 
-    console.log("💾 Backend: Saving product:", product);
+    console.log("💾 Backend: Saving product with image path:", image);
     const saved = await product.save();
-    console.log("✅ Backend: Product created successfully:", saved);
+    console.log("✅ Backend: Product created successfully with image:", saved.image);
+    
+    // Verify the saved product in database
+    const verification = await Product.findById(saved._id);
+    console.log("🔍 Backend: Verification check - saved image path:", verification.image);
+    
     res.status(201).json(saved);
   } catch (err) {
     console.error("❌ Backend: Create product error:", err);
@@ -91,18 +105,41 @@ exports.getAllProducts = async (req, res) => {
     console.log("✅ Backend: Found products:", products.length);
     console.log("🖼️ Backend: Image paths in products:", products.map(p => ({ name: p.name, image: p.image })));
     
-    // Fix any absolute paths to relative paths and SAVE them permanently
+    // Fix ALL types of incorrect image paths and SAVE them permanently
     let fixedCount = 0;
     for (const product of products) {
-      if (product.image && product.image.includes('/opt/render/project/src/backend/uploads/')) {
-        const filename = product.image.split('/').pop();
-        const newPath = `uploads/${filename}`;
-        console.log("🔧 Backend: Fixing and saving absolute path for product:", product.name, "Old:", product.image, "New:", newPath);
-        
-        // Update in database permanently
-        await Product.findByIdAndUpdate(product._id, { image: newPath });
-        product.image = newPath; // Update local object too
-        fixedCount++;
+      let newPath = product.image;
+      let needsUpdate = false;
+
+      // Check for various incorrect path formats
+      if (product.image) {
+        // Fix absolute paths from render deployment
+        if (product.image.includes('/opt/render/project/src/backend/uploads/')) {
+          const filename = product.image.split('/').pop();
+          newPath = `uploads/${filename}`;
+          needsUpdate = true;
+          console.log("🔧 Backend: Fixing absolute path for product:", product.name, "Old:", product.image, "New:", newPath);
+        }
+        // Fix paths that start with /uploads/ 
+        else if (product.image.startsWith('/uploads/')) {
+          newPath = product.image.substring(1); // Remove leading slash
+          needsUpdate = true;
+          console.log("🔧 Backend: Fixing leading slash for product:", product.name, "Old:", product.image, "New:", newPath);
+        }
+        // Fix any other incorrect path formats
+        else if (product.image.includes('uploads/') && !product.image.startsWith('uploads/')) {
+          const uploadIndex = product.image.lastIndexOf('uploads/');
+          newPath = product.image.substring(uploadIndex);
+          needsUpdate = true;
+          console.log("🔧 Backend: Normalizing path for product:", product.name, "Old:", product.image, "New:", newPath);
+        }
+
+        if (needsUpdate) {
+          // Update in database permanently
+          await Product.findByIdAndUpdate(product._id, { image: newPath });
+          product.image = newPath; // Update local object too
+          fixedCount++;
+        }
       }
     }
     
@@ -117,8 +154,6 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-      // @desc Update a product (admin only)
-// controllers/productController.js
 // @desc Update a product (admin only)
 exports.updateProduct = async (req, res) => {
   console.log("🔥 Backend: UPDATE PRODUCT started");
@@ -140,35 +175,29 @@ exports.updateProduct = async (req, res) => {
 
     console.log("📄 Backend: Current product before update:", product);
 
-    // Update fields - ensure we update even if values are provided
+    // Update fields with proper type conversion
     if (name !== undefined && name !== "") {
-      console.log("📝 Backend: Updating name from", product.name, "to", name);
       product.name = name;
     }
     if (price !== undefined && price !== "") {
-      console.log("💰 Backend: Updating price from", product.price, "to", price);
-      product.price = price;
+      product.price = Number(price);
     }
     if (description !== undefined && description !== "") {
-      console.log("📄 Backend: Updating description from", product.description, "to", description);
       product.description = description;
     }
     if (stock !== undefined && stock !== "") {
-      console.log("📦 Backend: Updating stock from", product.stock, "to", stock);
-      product.stock = stock;
+      product.stock = Number(stock);
     }
     if (category !== undefined && category !== "") {
-      console.log("🏷️ Backend: Updating category from", product.category, "to", category);
       product.category = category;
     }
 
     // Update image only if new image is uploaded
     if (req.file && req.file.filename) {
-      // Ensure ONLY filename is used, strip any absolute path
-      const filename = req.file.filename || req.file.originalname;
+      // Always use consistent relative path format
+      const filename = req.file.filename;
       const newImagePath = `uploads/${filename}`;
-      console.log("🖼️ Backend: Updating image from", product.image, "to", newImagePath);
-      console.log("🖼️ Backend: req.file.path was:", req.file.path);
+      console.log("🖼️ Backend: Updating image to:", newImagePath);
       product.image = newImagePath;
     }
 
@@ -216,4 +245,3 @@ exports.fixImagePaths = async (req, res) => {
     res.status(500).json({ message: "Migration failed", error: error.message });
   }
 };
-

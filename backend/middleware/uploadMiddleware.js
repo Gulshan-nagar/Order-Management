@@ -6,12 +6,15 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadPath = path.join(__dirname, "../uploads/");
         console.log("📁 Upload destination set to:", uploadPath);
+        console.log("🌐 Request source (uploadMiddleware):", req.get('User-Agent'));
+        console.log("📤 File being uploaded:", file.originalname);
         cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
         const filename = `${Date.now()}-${file.originalname}`;
         console.log("📝 Generated filename:", filename);
         console.log("📝 File will be stored as relative path: uploads/" + filename);
+        console.log("🔧 Full file path will be:", path.join(__dirname, "../uploads/", filename));
         cb(null, filename);
     },
 });
