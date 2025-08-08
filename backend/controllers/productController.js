@@ -1,6 +1,7 @@
 const Product = require("../models/Product");
 const asyncHandler = require("express-async-handler");
 const { fixImagePaths } = require("../utils/fixImagePaths");
+const { normalizeImagePath, validateImageFile } = require("../utils/imageUtils");
 
 // @desc Create new product (admin only)
 
@@ -27,10 +28,17 @@ exports.createProduct = async (req, res) => {
 
     let image = "";
     if (req.file) {
-      // Always use consistent relative path format
+      // Validate file
+      const validation = validateImageFile(req.file);
+      if (!validation.valid) {
+        console.log("❌ Backend: File validation failed:", validation.error);
+        return res.status(400).json({ error: validation.error });
+      }
+
+      // Use consistent relative path format
       const filename = req.file.filename;
-      image = `uploads/${filename}`;
-      console.log("📎 Backend: Image path set to (consistent format):", image);
+      image = normalizeImagePath(`uploads/${filename}`);
+      console.log("📎 Backend: Image path set to:", image);
       console.log("📎 Backend: File details:", {
         originalname: req.file.originalname,
         filename: req.file.filename,
@@ -105,39 +113,16 @@ exports.getAllProducts = async (req, res) => {
     console.log("✅ Backend: Found products:", products.length);
     console.log("🖼️ Backend: Image paths in products:", products.map(p => ({ name: p.name, image: p.image })));
     
-    // Fix ALL types of incorrect image paths and SAVE them permanently
+    // Normalize ALL image paths using the utility function
     let fixedCount = 0;
     for (const product of products) {
-      let newPath = product.image;
-      let needsUpdate = false;
-
-      // Check for various incorrect path formats
       if (product.image) {
-        // Fix absolute paths from render deployment
-        if (product.image.includes('/opt/render/project/src/backend/uploads/')) {
-          const filename = product.image.split('/').pop();
-          newPath = `uploads/${filename}`;
-          needsUpdate = true;
-          console.log("🔧 Backend: Fixing absolute path for product:", product.name, "Old:", product.image, "New:", newPath);
-        }
-        // Fix paths that start with /uploads/ 
-        else if (product.image.startsWith('/uploads/')) {
-          newPath = product.image.substring(1); // Remove leading slash
-          needsUpdate = true;
-          console.log("🔧 Backend: Fixing leading slash for product:", product.name, "Old:", product.image, "New:", newPath);
-        }
-        // Fix any other incorrect path formats
-        else if (product.image.includes('uploads/') && !product.image.startsWith('uploads/')) {
-          const uploadIndex = product.image.lastIndexOf('uploads/');
-          newPath = product.image.substring(uploadIndex);
-          needsUpdate = true;
-          console.log("🔧 Backend: Normalizing path for product:", product.name, "Old:", product.image, "New:", newPath);
-        }
-
-        if (needsUpdate) {
+        const normalizedPath = normalizeImagePath(product.image);
+        if (normalizedPath !== product.image) {
+          console.log("🔧 Backend: Normalizing path for product:", product.name, "Old:", product.image, "New:", normalizedPath);
           // Update in database permanently
-          await Product.findByIdAndUpdate(product._id, { image: newPath });
-          product.image = newPath; // Update local object too
+          await Product.findByIdAndUpdate(product._id, { image: normalizedPath });
+          product.image = normalizedPath; // Update local object too
           fixedCount++;
         }
       }
@@ -194,9 +179,16 @@ exports.updateProduct = async (req, res) => {
 
     // Update image only if new image is uploaded
     if (req.file && req.file.filename) {
-      // Always use consistent relative path format
+      // Validate file
+      const validation = validateImageFile(req.file);
+      if (!validation.valid) {
+        console.log("❌ Backend: File validation failed:", validation.error);
+        return res.status(400).json({ error: validation.error });
+      }
+
+      // Use consistent relative path format
       const filename = req.file.filename;
-      const newImagePath = `uploads/${filename}`;
+      const newImagePath = normalizeImagePath(`uploads/${filename}`);
       console.log("🖼️ Backend: Updating image to:", newImagePath);
       product.image = newImagePath;
     }
@@ -245,3 +237,4 @@ exports.fixImagePaths = async (req, res) => {
     res.status(500).json({ message: "Migration failed", error: error.message });
   }
 };
+

@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const { normalizeImagePath } = require("./imageUtils");
 
 // Function to fix absolute image paths in database
 const fixImagePaths = async () => {
@@ -11,15 +12,15 @@ const fixImagePaths = async () => {
     let fixedCount = 0;
     
     for (const product of products) {
-      if (product.image && (product.image.includes('/opt/render/project/src/backend/uploads/') || product.image.startsWith('/'))) {
-        const filename = product.image.split('/').pop();
-        const newPath = `uploads/${filename}`;
-        
-        console.log(`🔧 Fixing product "${product.name}": ${product.image} -> ${newPath}`);
-        
-        // Use findByIdAndUpdate for better reliability
-        await Product.findByIdAndUpdate(product._id, { image: newPath });
-        fixedCount++;
+      if (product.image) {
+        const normalizedPath = normalizeImagePath(product.image);
+        if (normalizedPath !== product.image) {
+          console.log(`🔧 Fixing product "${product.name}": ${product.image} -> ${normalizedPath}`);
+          
+          // Use findByIdAndUpdate for better reliability
+          await Product.findByIdAndUpdate(product._id, { image: normalizedPath });
+          fixedCount++;
+        }
       }
     }
     

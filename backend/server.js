@@ -15,18 +15,37 @@ const server = http.createServer(app);
 // ✅ Add your actual deployed frontend URL here
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:3000", 
+  "http://localhost:8080",
   "https://order-management-1-kt6d.onrender.com",
+  "https://id-preview--396da912-d36a-48dd-8743-717f79dca800.lovable.app",
+  /.*\.lovable\.app$/,
+  /.*\.lovableproject\.com$/
 ];
 
 // ✅ CORS middleware
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
         callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return;
       }
+      
+      // Check exact matches
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      
+      // Check regex patterns
+      const regexPatterns = allowedOrigins.filter(pattern => pattern instanceof RegExp);
+      if (regexPatterns.some(pattern => pattern.test(origin))) {
+        callback(null, true);
+        return;
+      }
+      
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
@@ -36,8 +55,17 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static file handling
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Enhanced static file handling with proper headers
+app.use("/uploads", (req, res, next) => {
+  // Set proper headers for images
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}, express.static(path.join(__dirname, "uploads"), {
+  maxAge: '1d', // Cache for 1 day
+  etag: true,
+  lastModified: true
+}));
 
 // Routes
 const userRoutes = require("./routes/userRoutes");

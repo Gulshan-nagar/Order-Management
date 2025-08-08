@@ -9,33 +9,32 @@ const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Sample fallback data
+  // Sample fallback data - using consistent relative paths
   const sampleProducts = [
     {
       _id: "1",
       name: "Veg Masala Burger",
       description: "Delicious vegetarian burger with spicy masala",
       price: 299,
-      image: "https://order-management-4pdd.onrender.com/uploads/product_1.jpeg",
+      image: "uploads/product_1.jpeg",
       category: "Food",
       rating: 4.5
     },
     {
-      
-    _id: "4",
-    name: "Wireless Earbuds",
-    description: "Bluetooth 5.0 Earbuds with high-quality sound",
-    price: 1999,
-    image: "https://order-management-4pdd.onrender.com/uploads/product_2.jpeg", // or any valid image path
-    category: "Electronics",
-    rating: 4.3
+      _id: "4",
+      name: "Wireless Earbuds",
+      description: "Bluetooth 5.0 Earbuds with high-quality sound",
+      price: 1999,
+      image: "uploads/product_2.jpeg",
+      category: "Electronics",
+      rating: 4.3
     },
     {
       _id: "3",
       name: "Red Sauce Pasta",
       description: "Authentic Italian pasta with rich tomato sauce",
       price: 399,
-      image: "https://order-management-4pdd.onrender.com/uploads/product_3.jpeg", 
+      image: "uploads/product_3.jpeg", 
       category: "Food",
       rating: 4.6
     }

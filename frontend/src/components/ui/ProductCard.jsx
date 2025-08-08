@@ -1,16 +1,18 @@
-import { getImageUrl } from "../../utils/getImageUrl";
+import Image from "./Image";
 import { Star, ShoppingCart, Heart } from "lucide-react";
 
 const ProductCard = ({ product, onAddToCart }) => (
   <div className="amazon-card hover-lift group">
     <div className="relative overflow-hidden rounded-lg mb-3">
-      {product.image && (
-        <img
-          src={getImageUrl(product.image)}
-          alt={product.name}
-          className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-      )}
+      <Image
+        src={product.image}
+        alt={product.name}
+        category={product.category}
+        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+        width={300}
+        height={192}
+        lazy={true}
+      />
       <button className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/80 hover:bg-white p-2 rounded-full shadow-md">
         <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 transition-colors" />
       </button>

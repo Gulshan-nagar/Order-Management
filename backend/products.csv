@@ -1,31 +1,16 @@
 _id,name,image,price,description,category,stock
-16,Face Wash,product_16.jpeg,8,"Gentle face cleanser suitable for all skin types.",Health & Personal Care,50
-17,Electric Trimmer,product_17.jpeg,32,"Rechargeable trimmer with multiple length settings.",Health & Personal Care,30
-18,Yoga Mat,product_18.jpeg,20,"Eco-friendly yoga mat with non-slip surface.",Health & Personal Care,40
-19,Hand Sanitizer,product_19.jpeg,5,"Antibacterial hand sanitizer with moisturizing formula.",Health & Personal Care,70
-20,Body Lotion,product_20.jpeg,11,"Hydrating body lotion for soft and smooth skin.",Health & Personal Care,60
-21,Olive Oil,product_21.jpeg,12,"Pure extra virgin olive oil for cooking and dressing.",Groceries & Essentials,80
-22,Basmati Rice,product_22.jpeg,15,"Premium long-grain basmati rice with rich aroma.",Groceries & Essentials,90
-23,Milk Pack,product_23.jpeg,2,"Fresh full cream milk pack with essential nutrients.",Groceries & Essentials,100
-24,Coffee Powder,product_24.jpeg,6,"Aromatic coffee powder for a rich and bold flavor.",Groceries & Essentials,75
-25,Toilet Cleaner,product_25.jpeg,3,"Effective toilet cleaner with disinfectant formula.",Groceries & Essentials,65
-26,Lipstick,product_26.jpeg,10,"Long-lasting matte lipstick in multiple shades.",Beauty & Cosmetics,40
-27,Foundation,product_27.jpeg,18,"Smooth blend foundation for a flawless base.",Beauty & Cosmetics,35
-28,Hair Serum,product_28.jpeg,14,"Nourishing serum for frizz-free and shiny hair.",Beauty & Cosmetics,50
-29,Face Mask,product_29.jpeg,6,"Refreshing sheet mask for glowing and hydrated skin.",Beauty & Cosmetics,60
-30,Perfume,product_30.jpeg,25,"Elegant fragrance with long-lasting freshness.",Beauty & Cosmetics,45
-31,Notebook,product_31.jpeg,3,"Spiral-bound notebook with ruled pages for everyday use.",Books & Stationery,90
-32,Pen Set,product_32.jpeg,5,"Smooth writing pen set with assorted colors.",Books & Stationery,85
-33,Highlighter,product_33.jpeg,4,"Bright highlighters for effective note-taking and marking.",Books & Stationery,70
-34,Novel Book,product_34.jpeg,13,"Bestselling fiction novel with engaging storyline.",Books & Stationery,55
-35,Study Lamp,product_35.jpeg,19,"Energy-efficient LED study lamp with touch controls.",Books & Stationery,40
-36,Soft Toy,product_36.jpeg,9,"Plush and cuddly soft toy perfect for kids.",Toys & Baby Products,50
-37,Toy Car,product_37.jpeg,7,"Durable toy car with pull-back action.",Toys & Baby Products,60
-38,Diapers Pack,product_38.jpeg,18,"Comfortable and absorbent diapers for all-day use.",Toys & Baby Products,70
-39,Building Blocks,product_39.jpeg,15,"Colorful building blocks for creative play.",Toys & Baby Products,80
-40,Color Book,product_40.jpeg,6,"Fun-filled coloring book to boost creativity in kids.",Toys & Baby Products,90
-41,Dumbbells,product_41.jpeg,35,"Set of dumbbells for strength training at home.",Sports & Outdoors,30
-42,Tennis Racket,product_42.jpeg,45,"Lightweight racket for professional and casual play.",Sports & Outdoors,25
-43,Football,product_43.jpeg,20,"Standard size football with durable outer covering.",Sports & Outdoors,40
-44,Backpack,product_44.jpeg,28,"Water-resistant backpack with multiple compartments.",Sports & Outdoors,50
-45,Sports Cap,product_45.jpeg,10,"Breathable cap with adjustable strap for outdoor use.",Sports & Outdoors,65
+1,Wireless Headphones,product_1.jpeg,59,"High-quality sound with noise cancellation and Bluetooth connectivity.",Electronics & Gadgets,100
+2,Smartphone,product_2.jpeg,499,"Latest smartphone with high-resolution display and fast processor.",Electronics & Gadgets,100
+3,Laptop,product_3.jpeg,799,"Powerful laptop suitable for work, gaming, and multimedia.",Electronics & Gadgets,100
+4,Smartwatch,product_4.jpeg,129,"Track your fitness and receive notifications on the go.",Electronics & Gadgets,100
+5,Bluetooth Speaker,product_5.jpeg,45,"Portable speaker with deep bass and long battery life.",Electronics & Gadgets,100
+6,Men's T-Shirt,product_6.jpeg,19,"Comfortable cotton t-shirt perfect for everyday wear.",Fashion & Apparel,100
+7,Women's Dress,product_7.jpeg,39,"Elegant and stylish dress for casual and party occasions.",Fashion & Apparel,100
+8,Kids' Jacket,product_8.jpeg,29,"Warm and lightweight jacket for kids with fun prints.",Fashion & Apparel,100
+9,Running Shoes,product_9.jpeg,49,"Durable and breathable shoes for sports and fitness.",Fashion & Apparel,100
+10,Wristwatch,product_10.jpeg,59,"Classic analog wristwatch with waterproof design.",Fashion & Apparel,100
+11,Non-stick Pan,product_11.jpeg,25,"Easy-to-clean non-stick pan ideal for everyday cooking.",Home & Kitchen,100
+12,Decor Vase,product_12.jpeg,18,"Modern decorative vase to enhance your home aesthetics.",Home & Kitchen,100
+13,Storage Box,product_13.jpeg,12,"Sturdy plastic storage box for organizing household items.",Home & Kitchen,100
+14,Electric Kettle,product_14.jpeg,29,"Quick-boil kettle with auto shut-off and stainless steel body.",Home & Kitchen,100
+15,Table Lamp,product_15.jpeg,22,"LED table lamp with adjustable brightness and angle.",Home & Kitchen,100

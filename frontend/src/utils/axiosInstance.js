@@ -1,8 +1,8 @@
 import axios from "axios";
 
-// Dynamically set base URL
-const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"; // fallback to localhost
+// Set base URL with localhost development support
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.DEV ? "http://localhost:5000" : "https://order-management-4pdd.onrender.com");
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

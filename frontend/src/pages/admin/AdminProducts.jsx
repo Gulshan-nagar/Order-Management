@@ -125,7 +125,7 @@ const AdminProducts = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    // if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await axiosInstance.delete(API_PATHS.PRODUCTS.DELETE(id));
       toast.success("Product deleted successfully");
