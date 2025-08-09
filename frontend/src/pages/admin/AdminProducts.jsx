@@ -23,7 +23,6 @@ const AdminProducts = () => {
     try {
       console.log("🔍 AdminProducts: Fetching products...");
       const res = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL);
-      console.log("✅ AdminProducts: Products fetched:", res.data);
       console.log("🖼️ AdminProducts: Image paths check:", res.data.map(p => ({ name: p.name, image: p.image })));
       setProducts(res.data);
     } catch (error) {
