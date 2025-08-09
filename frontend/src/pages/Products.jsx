@@ -1,8 +1,7 @@
-// Updated Products.jsx with better mobile responsiveness and improved visuals
 import React, { useContext, useState } from "react";
 import { StoreContext } from "../context/StoreContext";
 import ProductCard from "../components/ui/ProductCard";
-import { Filter, Grid, List, SortAsc } from "lucide-react";
+import { Filter, Grid, List, SortAsc, Search } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 
 const Products = () => {
@@ -26,21 +25,15 @@ const Products = () => {
     "Sports & Outdoors",
   ];
 
-const categorizedProducts = products || [];
-
-
-
-
-const filteredProducts = categorizedProducts.filter((item) => {
-  const matchesCategory =
-    selectedCategory === "All" ||
-    item.category?.toLowerCase() === selectedCategory.toLowerCase();
-  const matchesSearch = item.name
-    .toLowerCase()
-    .includes(searchQuery.toLowerCase());
-  return matchesCategory && matchesSearch;
-});
-
+  const filteredProducts = (products || []).filter((item) => {
+    const matchesCategory =
+      selectedCategory === "All" ||
+      item.category?.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
@@ -64,34 +57,29 @@ const filteredProducts = categorizedProducts.filter((item) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-orange-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900">
-            Explore Our Products
-          </h1>
-          <p className="text-gray-500 mt-2 text-sm md:text-base">
-            Browse top-quality items at great prices
-          </p>
+        <div className="mb-6">
+          
+          
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col gap-4 md:flex-row justify-between mb-8">
+        <div className="flex flex-col lg:flex-row gap-4 justify-between mb-6 bg-card border border-border rounded-lg p-4 shadow-sm">
           {/* Filters */}
-          <div className="overflow-x-auto -mx-2 px-2">
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-600 shrink-0" />
-              <span className="font-medium text-gray-700 shrink-0">Filter:</span>
-              <div className="flex gap-2 overflow-x-auto">
+          <div className="overflow-x-auto">
+            <div className="flex items-center gap-3">
+              <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
                     className={`whitespace-nowrap px-3 py-1.5 text-sm rounded-full border transition-all ${
                       selectedCategory === category
-                        ? "bg-orange-600 text-white border-orange-600 shadow-md"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-background text-foreground border-border hover:bg-muted"
                     }`}
                   >
                     {category}
@@ -102,13 +90,13 @@ const filteredProducts = categorizedProducts.filter((item) => {
           </div>
 
           {/* Sort & View */}
-          <div className="flex flex-wrap items-center gap-3 justify-end">
+          <div className="flex items-center gap-3 justify-end">
             <div className="flex items-center gap-2">
-              <SortAsc className="w-5 h-5 text-gray-600" />
+              <SortAsc className="w-4 h-4 text-muted-foreground" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-orange-500"
+                className="border border-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-accent bg-background text-foreground"
               >
                 <option value="name">Sort by Name</option>
                 <option value="price-low">Price: Low to High</option>
@@ -116,23 +104,23 @@ const filteredProducts = categorizedProducts.filter((item) => {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 border border-border rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg border ${
+                className={`p-2 transition-colors ${
                   viewMode === "grid"
-                    ? "bg-orange-600 text-white border-orange-600"
-                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background text-muted-foreground hover:bg-muted"
                 }`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg border ${
+                className={`p-2 transition-colors ${
                   viewMode === "list"
-                    ? "bg-orange-600 text-white border-orange-600"
-                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background text-muted-foreground hover:bg-muted"
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -143,26 +131,27 @@ const filteredProducts = categorizedProducts.filter((item) => {
 
         {/* Product Grid/List */}
         <div
-          className={`${
+          className={
             viewMode === "grid"
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              ? "grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
               : "space-y-4"
-          }`}
+          }
         >
           {sortedProducts.length > 0 ? (
             sortedProducts.map((product) => (
-              <ProductCard
-                key={product._id}
-                product={product}
-                onAddToCart={addToCart}
-                viewMode={viewMode}
-              />
+              <div key={product._id} className="flex justify-center">
+                <ProductCard product={product} onAddToCart={addToCart} />
+              </div>
             ))
           ) : (
             <div className="col-span-full text-center py-16">
-              <div className="text-6xl mb-4 text-gray-300">😕</div>
-              <h2 className="text-xl font-semibold text-gray-700">No products found</h2>
-              <p className="text-gray-500">
+              <div className="w-24 h-24 mx-auto mb-6 bg-muted/50 rounded-full flex items-center justify-center">
+                <Search className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                No products found
+              </h2>
+              <p className="text-muted-foreground">
                 {selectedCategory === "All" && searchQuery === ""
                   ? "We're currently out of products."
                   : `No items found for "${searchQuery}" in "${selectedCategory}".`}

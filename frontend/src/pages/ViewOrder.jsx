@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { API_PATHS, BASE_URL } from "../utils/apiPaths";
+import { API_PATHS } from "../utils/apiPaths";
 import socket from "../utils/socket";
-
+import OrderCard from "../components/ui/OrderCard";
+import { Package, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ViewOrder = () => {
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -16,87 +19,80 @@ const ViewOrder = () => {
         console.error("Error fetching orders:", err);
       }
     };
-
     fetchOrders();
   }, []);
 
- useEffect(() => {
-  socket.on("order-status-updated", (updatedOrder) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order._id === updatedOrder._id ? updatedOrder : order
-      )
-    );
-  });
-
-  return () => {
-    socket.off("order-status-updated");
-  };
-}, []);
-
+  useEffect(() => {
+    socket.on("order-status-updated", (updatedOrder) => {
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+    });
+    return () => {
+      socket.off("order-status-updated");
+    };
+  }, []);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4 text-center">📦 Your Orders</h2>
-
-      {orders.length === 0 ? (
-        <p className="text-center text-gray-500">
-          You haven't placed any orders yet.
-        </p>
-      ) : (
-        <div className="space-y-6 max-w-4xl mx-auto">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="border rounded-xl shadow p-4 bg-white"
-            >
-              <p className="text-sm text-gray-500 mb-2">
-                <strong>Order ID:</strong> {order._id}
-              </p>
-
-              {order.items.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-4 border-t pt-4 mt-2"
-                >
-                  {item.product ? (
-                    <>
-                      <img
-                        src={`${BASE_URL}${item.product.image}`}
-                        alt={item.product.name}
-                        className="w-24 h-24 object-cover rounded"
-                       
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-800">
-                          {item.product.name}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Price: ₹{item.product.price}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Quantity: {item.quantity}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-red-600">
-                      ⚠️ Product no longer available
-                    </p>
-                  )}
-                </div>
-              ))}
-
-              <p className="mt-4 text-sm">
-                <strong>Status:</strong>{" "}
-                <span className="text-blue-600 font-semibold">
-                  {order.status}
-                </span>
-              </p>
-            </div>
-          ))}
+    <div
+      className="min-h-screen p-4 lg:p-6"
+      style={{
+        background:
+          "linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%), url('https://www.transparenttextures.com/patterns/cubes.png')",
+        backgroundSize: "auto, 400px",
+        backgroundRepeat: "repeat",
+      }}
+    >
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8 pb-3 border-b border-border">
+          <div className="bg-yellow-400 p-2 rounded-lg shadow-md">
+            <Package className="w-6 h-6 text-black" />
+          </div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+            Your Orders
+          </h1>
         </div>
-      )}
+
+        {/* No Orders */}
+        {orders.length === 0 ? (
+          <div className="text-center py-20 bg-card/60 rounded-xl shadow-md backdrop-blur-sm border border-border">
+            <div className="w-32 h-32 mx-auto mb-8 bg-muted/30 rounded-full flex items-center justify-center shadow-inner">
+              <Package className="w-16 h-16 text-muted-foreground" />
+            </div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">
+              No Orders Yet
+            </h2>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+              You haven't placed any orders yet. Start shopping to see your
+              orders here!
+            </p>
+            <button
+              onClick={() => navigate("/products")}
+              className="amazon-button-yellow gap-2 inline-flex items-center"
+            >
+              Start Shopping
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          // Orders List
+          <div className="space-y-6">
+            {orders.map((order, index) => (
+              <div key={order._id} className="relative">
+                {index > 0 && (
+                  <div className="absolute -top-3 left-0 right-0 h-px bg-border" />
+                )}
+                <div className="bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-border">
+                  <OrderCard order={order} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

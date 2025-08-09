@@ -44,82 +44,88 @@ const Header = ({ searchQuery, setSearchQuery }) => {
   };
 
   return (
-    <header className="bg-[#1f2937] text-white sticky top-0 z-50 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="amazon-navbar text-white sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Logo */}
         <div
-          className="text-2xl font-bold cursor-pointer hover:text-orange-500 transition"
+          className="text-2xl font-bold cursor-pointer hover:text-secondary transition-colors flex-shrink-0"
           onClick={() => handleNav("/products")}
         >
-          Shop<span className="text-orange-500">Zone</span>
+          Shop<span className="text-secondary">Zone</span>
         </div>
 
         {/* Location */}
-        <div className="hidden md:flex items-center gap-2 text-sm text-white/80">
+        <div className="hidden lg:flex items-center gap-2 text-sm text-white/90 flex-shrink-0">
           <MapPin className="w-4 h-4" />
           <div>
-            <div className="text-xs">Deliver to</div>
-            <div className="font-medium">India 110001</div>
+            <div className="text-xs text-white/70">Deliver to</div>
+            <div className="font-semibold">India 110001</div>
           </div>
         </div>
 
         {/* Search (Desktop) */}
-        <div className="hidden md:block flex-1 mx-6">
-          <div className="relative">
+        <div className="hidden md:block flex-1 max-w-2xl mx-4">
+          <div className="amazon-search flex">
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full px-4 py-2 rounded-lg border-2 border-primary/20 focus:border-orange-500 focus:outline-none"
+              className="flex-1 px-4 py-2.5 text-foreground bg-background border-0 focus:outline-none text-sm"
               value={searchQuery}
               onChange={handleSearchChange}
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 bg-orange-500 text-white p-1.5 rounded-md">
-              <Search className="w-4 h-4" />
-            </div>
+            <button className="bg-secondary px-4 py-2.5 hover:bg-secondary/90 transition-colors">
+              <Search className="w-5 h-5 text-foreground" />
+            </button>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {user ? (
-            <div className="hidden md:flex flex-col text-sm cursor-pointer">
-              <span className="font-semibold">Hi, {user.name}</span>
-              <button
-                onClick={() => handleNav("/view-order")}
-                className="hover:text-orange-400 text-left"
-              >
-                Orders
-              </button>
+            <div className="hidden lg:flex flex-col text-sm cursor-pointer">
+              <span className="text-xs text-white/70">Hello</span>
+              <span className="font-semibold">{user.name}</span>
             </div>
           ) : (
             <button
               onClick={() => handleNav("/login")}
-              className="hidden md:flex flex-col text-sm hover:text-orange-400 text-left"
+              className="hidden lg:flex flex-col text-sm hover:text-secondary text-left transition-colors"
             >
-              <span>Hello, sign in</span>
-              <span className="font-medium">Account & Lists</span>
+              <span className="text-xs text-white/70">Hello, sign in</span>
+              <span className="font-semibold">Account & Lists</span>
             </button>
           )}
+
+          {/* Orders */}
+          <button
+            onClick={() => handleNav("/view-order")}
+            className="hidden md:flex flex-col text-sm hover:text-secondary text-left transition-colors"
+          >
+            <span className="text-xs text-white/70">Returns</span>
+            <span className="font-semibold">& Orders</span>
+          </button>
 
           {/* Cart */}
           <button
             onClick={() => handleNav("/cart")}
-            className="relative flex items-center gap-1 hover:text-orange-400"
+            className="relative flex items-center gap-2 hover:text-secondary transition-colors p-2 -m-2"
           >
-            <ShoppingCart className="w-6 h-6" />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-            <span className="hidden md:block font-medium">Cart</span>
+            <div className="relative">
+              <ShoppingCart className="w-7 h-7" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+            <span className="hidden md:block font-semibold text-sm">Cart</span>
           </button>
 
           {/* Logout */}
           {user && (
             <button
               onClick={handleLogout}
-              className="hidden md:block hover:text-red-400"
+              className="hidden md:block hover:text-accent transition-colors p-1"
               title="Logout"
             >
               <LogOut className="w-5 h-5" />
@@ -128,7 +134,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="md:hidden p-1"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <Menu className="w-6 h-6" />
@@ -138,52 +144,52 @@ const Header = ({ searchQuery, setSearchQuery }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-800 px-4 py-4 space-y-4">
+        <div className="md:hidden bg-primary/95 backdrop-blur-sm px-4 py-4 space-y-4 border-t border-white/10">
           {/* Search */}
-          <div className="relative">
+          <div className="amazon-search flex">
             <input
               type="text"
               placeholder="Search products..."
-              className="w-full px-4 py-2 rounded-lg border-2 border-orange-400 focus:outline-none"
+              className="flex-1 px-4 py-2.5 text-foreground bg-background border-0 focus:outline-none text-sm"
               value={searchQuery}
               onChange={handleSearchChange}
             />
-            <div className="absolute right-2 top-[9px] bg-orange-500 text-white p-1.5 rounded-md">
-              <Search className="w-4 h-4" />
-            </div>
+            <button className="bg-secondary px-4 py-2.5 hover:bg-secondary/90 transition-colors">
+              <Search className="w-5 h-5 text-foreground" />
+            </button>
           </div>
 
           {/* Mobile Links */}
           {!user && (
             <button
               onClick={() => handleNav("/login")}
-              className="block w-full text-left hover:text-orange-400"
+              className="block w-full text-left hover:text-secondary py-2 transition-colors"
             >
               Sign In
             </button>
           )}
           <button
             onClick={() => handleNav("/products")}
-            className="block w-full text-left hover:text-orange-400"
+            className="block w-full text-left hover:text-secondary py-2 transition-colors"
           >
             All Products
           </button>
           <button
             onClick={() => handleNav("/view-order")}
-            className="block w-full text-left hover:text-orange-400"
+            className="block w-full text-left hover:text-secondary py-2 transition-colors"
           >
             My Orders
           </button>
           <button
             onClick={() => handleNav("/cart")}
-            className="block w-full text-left hover:text-orange-400"
+            className="block w-full text-left hover:text-secondary py-2 transition-colors"
           >
             My Cart
           </button>
           {user && (
             <button
               onClick={handleLogout}
-              className="block w-full text-left hover:text-red-400"
+              className="block w-full text-left hover:text-accent py-2 transition-colors"
             >
               Logout
             </button>

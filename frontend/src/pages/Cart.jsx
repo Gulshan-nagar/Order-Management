@@ -1,7 +1,10 @@
 import React, { useContext, useState } from "react";
 import { StoreContext } from "../context/StoreContext";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils/apiPaths";
+import { ShoppingBag, ArrowRight, Tag } from "lucide-react";
+import CartCard from "../components/ui/CartCard";
+import { Button } from "../components/ui/button";
+import { toast } from "../components/ui/use-toast";
 
 const Cart = () => {
   const { cartItems, products, removeFromCart, addToCart, getTotalCartAmount, getTotalCartItems, placeOrder } = useContext(StoreContext);
@@ -16,73 +19,70 @@ const Cart = () => {
     try {
       setIsOrdering(true);
       await placeOrder();
-      alert("Order placed successfully!");
+      toast({
+        title: "Order Placed Successfully! 🎉",
+        description: "Your order has been confirmed and will be delivered soon.",
+      });
       navigate("/view-order");
     } catch (error) {
       console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      toast({
+        title: "Order Failed",
+        description: "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsOrdering(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-4 lg:p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">🛒 Shopping Cart</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-foreground flex items-center gap-3">
+          <ShoppingBag className="w-8 h-8 text-primary" />
+          Shopping Cart
+        </h1>
 
         {cartProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-2xl font-semibold text-gray-600 mb-4">Your cart is empty</h2>
-            <button 
+          <div className="text-center py-20">
+            <div className="w-32 h-32 mx-auto mb-8 bg-muted/30 rounded-full flex items-center justify-center">
+              <ShoppingBag className="w-16 h-16 text-muted-foreground" />
+            </div>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Your cart is empty</h2>
+            <p className="text-muted-foreground mb-8">Start adding some amazing products to your cart!</p>
+            <button
               onClick={() => navigate("/products")}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="amazon-button-yellow gap-2 inline-flex items-center"
             >
               Continue Shopping
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Cart Items ({getTotalCartItems()})</h2>
+              <div className="amazon-card p-6">
+                <h2 className="text-xl font-semibold mb-6 text-foreground">
+                  Cart Items ({getTotalCartItems()})
+                </h2>
                 <div className="space-y-4">
                   {cartProducts.map((product) => (
-                    <div key={product._id} className="flex items-center gap-4 p-4 border rounded-lg">
-                      <img
-                        src={`${BASE_URL}${product.image}`}
-                        alt={product.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                        <p className="text-green-600 font-bold">₹{product.price}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => removeFromCart(product._id)}
-                          className="w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center"
-                        >
-                          -
-                        </button>
-                        <span className="font-semibold min-w-[2rem] text-center">
-                          {cartItems[product._id]}
-                        </span>
-                        <button
-                          onClick={() => addToCart(product._id)}
-                          className="w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-lg">
-                          ₹{product.price * cartItems[product._id]}
-                        </p>
-                      </div>
-                    </div>
+                    <CartCard
+                      key={product._id}
+                      product={product}
+                      quantity={cartItems[product._id]}
+                      onIncrease={() => addToCart(product._id)}
+                      onDecrease={() => removeFromCart(product._id)}
+                      onRemove={() => {
+                        // Remove all quantities of this item
+                        const currentQuantity = cartItems[product._id];
+                        for (let i = 0; i < currentQuantity; i++) {
+                          removeFromCart(product._id);
+                        }
+                      }}
+                    />
                   ))}
                 </div>
               </div>
@@ -90,19 +90,19 @@ const Cart = () => {
 
             {/* Order Summary */}
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
+              <div className="amazon-card p-6 shadow-premium">
+                <h2 className="text-xl font-semibold mb-6 text-foreground">Order Summary</h2>
+                <div className="space-y-4">
+                  <div className="flex justify-between text-foreground">
                     <span>Subtotal</span>
-                    <span>₹{getTotalCartAmount()}</span>
+                    <span className="font-medium">₹{getTotalCartAmount()}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-foreground">
                     <span>Delivery Fee</span>
-                    <span>₹{deliveryFee}</span>
+                    <span className="font-medium">₹{deliveryFee}</span>
                   </div>
-                  <hr />
-                  <div className="flex justify-between font-bold text-lg">
+                  <hr className="border-border" />
+                  <div className="flex justify-between font-bold text-lg text-foreground">
                     <span>Total</span>
                     <span>₹{totalAmount}</span>
                   </div>
@@ -110,21 +110,24 @@ const Cart = () => {
                 <button
                   onClick={handlePlaceOrder}
                   disabled={isOrdering}
-                  className="w-full mt-6 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors font-semibold"
+                  className="amazon-button-yellow w-full mt-6 text-base"
                 >
                   {isOrdering ? "Placing Order..." : "Place Order"}
                 </button>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="font-semibold mb-3">Promo Code</h3>
+              <div className="amazon-card p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Tag className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold text-foreground">Promo Code</h3>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     placeholder="Enter promo code"
-                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   />
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <button className="amazon-button-orange px-4">
                     Apply
                   </button>
                 </div>

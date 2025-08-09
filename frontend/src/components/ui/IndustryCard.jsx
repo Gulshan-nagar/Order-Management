@@ -1,6 +1,6 @@
 import React from "react";
 import { Star, ShoppingCart, Heart, Truck, Shield } from "lucide-react";
-import { EnhancedButton } from "./enhanced-button";
+import { Button } from "./button";
 import Image from "./Image";
 
 const IndustryCard = ({ product, onAddToCart, onToggleFavorite, isFavorite = false }) => {
@@ -94,11 +94,11 @@ const IndustryCard = ({ product, onAddToCart, onToggleFavorite, isFavorite = fal
       
       {/* Action Buttons */}
       <div className="p-5 pt-0">
-        <EnhancedButton
+        <Button
           onClick={() => onAddToCart(product._id)}
           disabled={product.stock === 0}
-          variant={product.stock === 0 ? "outline" : "cart"}
-          size="cart"
+          variant={product.stock === 0 ? "outline" : "default"}
+          size="default"
           className="w-full"
         >
           {product.stock === 0 ? (
@@ -109,7 +109,7 @@ const IndustryCard = ({ product, onAddToCart, onToggleFavorite, isFavorite = fal
               Add to Cart
             </>
           )}
-        </EnhancedButton>
+        </Button>
       </div>
     </div>
   );
