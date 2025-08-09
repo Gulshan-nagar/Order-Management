@@ -21,9 +21,7 @@ const AdminProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      console.log("🔍 AdminProducts: Fetching products...");
       const res = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL);
-      console.log("🖼️ AdminProducts: Image paths check:", res.data.map(p => ({ name: p.name, image: p.image })));
       setProducts(res.data);
     } catch (error) {
       console.error("❌ AdminProducts: Error fetching products:", error);
@@ -62,17 +60,12 @@ const AdminProducts = () => {
     e.preventDefault();
     setLoading(true);
 
-    console.log("🚀 AdminProducts: Starting submit for", editId ? "UPDATE" : "CREATE");
-    console.log("📝 AdminProducts: Form data:", formData);
-    console.log("🖼️ AdminProducts: Image file:", image);
-
+  
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      console.log(`📋 AdminProducts: Adding to FormData - ${key}:`, value);
       form.append(key, value);
     });
     if (image) {
-      console.log("📎 AdminProducts: Adding image to FormData:", image.name);
       form.append("image", image);
     }
 
@@ -83,14 +76,10 @@ const AdminProducts = () => {
     try {
       let response;
       if (editId) {
-        console.log("🔄 AdminProducts: Updating product with ID:", editId);
         response = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE(editId), form, config);
-        console.log("✅ AdminProducts: Update response:", response.data);
         toast.success("Product updated successfully");
       } else {
-        console.log("➕ AdminProducts: Creating new product");
         response = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE, form, config);
-        console.log("✅ AdminProducts: Create response:", response.data);
         toast.success("Product added successfully");
       }
 
@@ -106,10 +95,7 @@ const AdminProducts = () => {
   };
 
   const handleEdit = (product) => {
-    console.log("✏️ AdminProducts: Editing product:", product);
-    console.log("🖼️ AdminProducts: Current image path:", product.image);
-    console.log("🔗 AdminProducts: Generated image URL:", product.image ? getImageUrl(product.image) : "No image");
-    
+   
     setEditId(product._id);
     setFormData({
       name: product.name,
@@ -138,9 +124,7 @@ const AdminProducts = () => {
   const handleFixImagePaths = async () => {
     if (!window.confirm("Fix all absolute image paths in the database?")) return;
     try {
-      console.log("🔧 AdminProducts: Starting image path migration...");
       const response = await axiosInstance.post("/api/products/fix-image-paths");
-      console.log("✅ AdminProducts: Migration result:", response.data);
       toast.success(`Fixed ${response.data.fixedCount} products`);
       fetchProducts(); // Refresh the list
     } catch (error) {

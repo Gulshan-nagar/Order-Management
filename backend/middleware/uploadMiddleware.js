@@ -11,9 +11,7 @@ if (!fs.existsSync(uploadsDir)) {
 // Configure storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log("📁 Upload destination set to:", uploadsDir);
-    console.log("🌐 Request source (uploadMiddleware):", req.get('User-Agent'));
-    console.log("📤 File being uploaded:", file.originalname);
+   
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
@@ -22,9 +20,6 @@ const storage = multer.diskStorage({
     const ext = path.extname(file.originalname);
     const filename = `${uniqueSuffix}${ext}`;
     
-    console.log("📝 Generated filename:", filename);
-    console.log("📝 File will be stored as relative path: uploads/" + filename);
-    console.log("🔧 Full file path will be:", path.join(uploadsDir, filename));
     cb(null, filename);
   },
 });

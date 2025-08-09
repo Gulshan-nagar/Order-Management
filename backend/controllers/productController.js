@@ -12,11 +12,7 @@ const { normalizeImagePath, validateImageFile } = require("../utils/imageUtils")
 // Create Product
 // Corrected Create Product
 exports.createProduct = async (req, res) => {
-  console.log("🚀 Backend: CREATE PRODUCT started");
-  console.log("📝 Backend: req.body:", req.body);
-  console.log("🖼️ Backend: req.file:", req.file);
-  console.log("🔍 Backend: req.files:", req.files);
-  console.log("🌐 Backend: Request source:", req.get('User-Agent'));
+
   
   try {
     const { name, price, stock, description, category } = req.body;
@@ -38,13 +34,7 @@ exports.createProduct = async (req, res) => {
       // Use consistent relative path format
       const filename = req.file.filename;
       image = normalizeImagePath(`uploads/${filename}`);
-      console.log("📎 Backend: Image path set to:", image);
-      console.log("📎 Backend: File details:", {
-        originalname: req.file.originalname,
-        filename: req.file.filename,
-        path: req.file.path,
-        size: req.file.size
-      });
+    
     } else {
       console.log("⚠️ Backend: No file received in req.file");
     }
@@ -59,7 +49,6 @@ exports.createProduct = async (req, res) => {
       createdBy: req.user._id,
     });
 
-    console.log("💾 Backend: Saving product with image path:", image);
     const saved = await product.save();
     console.log("✅ Backend: Product created successfully with image:", saved.image);
     
@@ -110,8 +99,7 @@ exports.getAllProducts = async (req, res) => {
   console.log("🔍 Backend: GET ALL PRODUCTS started");
   try {
     const products = await Product.find();
-    console.log("✅ Backend: Found products:", products.length);
-    console.log("🖼️ Backend: Image paths in products:", products.map(p => ({ name: p.name, image: p.image })));
+   
     
     // Normalize ALL image paths using the utility function
     let fixedCount = 0;
@@ -141,16 +129,11 @@ exports.getAllProducts = async (req, res) => {
 
 // @desc Update a product (admin only)
 exports.updateProduct = async (req, res) => {
-  console.log("🔥 Backend: UPDATE PRODUCT started");
-  console.log("📝 Backend: req.body:", req.body);
-  console.log("🖼️ Backend: req.file:", req.file);
-  console.log("🆔 Backend: req.params.id:", req.params.id);
-
+  
   try {
     const { name, price, description, stock, category } = req.body;
     const { id } = req.params;
 
-    console.log("🔍 Backend: Finding product with ID:", id);
     const product = await Product.findById(id);
 
     if (!product) {
@@ -158,7 +141,6 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    console.log("📄 Backend: Current product before update:", product);
 
     // Update fields with proper type conversion
     if (name !== undefined && name !== "") {
@@ -189,14 +171,11 @@ exports.updateProduct = async (req, res) => {
       // Use consistent relative path format
       const filename = req.file.filename;
       const newImagePath = normalizeImagePath(`uploads/${filename}`);
-      console.log("🖼️ Backend: Updating image to:", newImagePath);
       product.image = newImagePath;
     }
 
-    console.log("💾 Backend: Saving updated product:", product);
     const updatedProduct = await product.save();
 
-    console.log("✅ Backend: Product updated successfully:", updatedProduct);
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.error("❌ Backend: Product update error:", error);
