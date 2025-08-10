@@ -1,4 +1,4 @@
-# A food ordering web application with separate user and admin panels. Built with React, Node.js, MongoDB, and Tailwind CSS.
+# A Order mangement web application with separate user and admin panels. Built with React, Node.js, MongoDB, and Tailwind CSS.
 
 ✅ Features
 🔒 User Authentication (Login/Register)
